@@ -7,7 +7,8 @@ module.exports = class Round {
         this.id = generateUniqueId();
         this.players = players;
         this.playerIndex = 0;
-        this.dealer = new Dealer();
+        this.turns = [];
+        this.dealer = new Dealer(generateUniqueId());
         this.cards = new GameCards();
         this.#start();
     }
@@ -23,31 +24,53 @@ module.exports = class Round {
         this.selectedPlayer = this.dealer;
         this.hit();
         this.selectedPlayer = this.players[this.playerIndex];
-        this.selectedPlayer.canBet === true;
+        this.turns = [];
+        this.allowedMoves = ["bet"];
+        this.#saveTurn();
     }
 
 
     bet(amount) {
         this.selectedPlayer.bet(amount);
+        this.allowedMoves = ["hit", "stand"];
+        this.#saveTurn();
     }
 
     hit() {
         this.selectedPlayer.pullACard(this.cards.take());
+        this.allowedMoves = ["hit", "stand"];
+        if (this.selectedPlayer.isBust()) {
+            this.selectedPlayer.outcome = "DEFEAT";
+            this.selectedPlayer.currentBet = 0;
+            this.allowedMoves = [];
+            this.playerIndex++;
+        } else if (!this.selectedPlayer.outcome) {
+            this.allowedMoves.push("bet");
+        }
+        this.#saveTurn();
     }
 
     stand() {
         if (++this.playerIndex < this.players.length) {
             this.selectedPlayer = this.players[this.playerIndex];
+            this.#saveTurn();
             return;
         }
         this.selectedPlayer = this.dealer;
         this.selectedPlayer.play(this);
         this.#transferMoney();
-        this.selectedPlayer = null;
+        this.allowedMoves = [];
+        this.#saveTurn();
     }
 
-    isCompleted() {
-        return this.selectedPlayer === null;
+    isActive() {
+        return this.players.some(p => !p.outcome);
+    }
+
+    #saveTurn() {
+        const copy = JSON.parse(JSON.stringify(this));
+        delete copy.turns;
+        this.turns.push(copy);
     }
 
     #transferMoney() {
@@ -70,13 +93,5 @@ module.exports = class Round {
             }
             player.currentBet = 0;
         }
-    }
-
-    calculateAllowedMoves() {
-        if (this.isCompleted() || this.selectedPlayer.outcome)
-            return [];
-        if (this.selectedPlayer.canBet === true)
-            return ["bet"];
-        return ["hit", "stand"];
     }
 }

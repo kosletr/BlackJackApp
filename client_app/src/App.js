@@ -17,7 +17,7 @@ function App() {
   }, []);
 
   function handleClick() {
-    const data = { message: "test message" };
+    const data = { command: "startNextRound" };
     ws.send(JSON.stringify(data));
   }
 

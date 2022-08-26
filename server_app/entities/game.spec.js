@@ -1,7 +1,7 @@
 const { generateUniqueId } = require("../utils");
 const Game = require("./game");
 const User = require("./user");
-const { loseByTakingTooManyCards } = require("./utils");
+const {  loseByBust } = require("./testUtils");
 
 describe('Game', () => {
     let game;
@@ -33,6 +33,20 @@ describe('Game', () => {
         });
     })
 
+    it("should not be able to do no thing when player says stand.", () => {
+        game.addUser(user1);
+        game.startNextRound();
+
+        const round = game.currentRound();
+        round.bet(50);
+        round.stand();
+
+        expect(game.calculateAllowedMoves()).toEqual({
+            game: ["calculateAllowedMoves", "addUser", "removeUserById", "startNextRound"],
+            round: []
+        });
+    })
+
     it("should be able to hit and stand when a player has made a bet.", () => {
         game.addUser(user1);
         game.addUser(user2);
@@ -56,8 +70,7 @@ describe('Game', () => {
 
         const round = game.currentRound();
         round.bet(50);
-        loseByTakingTooManyCards(round);
-        round.stand();
+        loseByBust(round);
         round.bet(20);
 
         expect(round.players[0].outcome).toBe("DEFEAT");
@@ -74,7 +87,7 @@ describe('Game', () => {
         game.startNextRound();
 
         const round = game.currentRound();
-        round.dealer.play = loseByTakingTooManyCards;
+        round.dealer.play = loseByBust;
 
         round.bet(50);
         round.stand();
@@ -95,11 +108,10 @@ describe('Game', () => {
         game.startNextRound();
 
         const round = game.currentRound();
-        round.dealer.play = loseByTakingTooManyCards;
+        round.dealer.play = loseByBust;
 
         round.bet(50);
-        loseByTakingTooManyCards(round);
-        round.stand();
+        loseByBust(round);
         round.bet(30);
         round.stand();
 
@@ -111,4 +123,24 @@ describe('Game', () => {
         });
     })
 
+    // it("should have two rounds.", () => {
+    //     game.addUser(user1);
+
+    //     game.startNextRound();
+    //     const round1 = game.currentRound();
+    //     round1.bet(50);
+    //     loseByBust(round1);
+    //     // game.finishRound();
+    //     game.startNextRound();
+    //     const round2 = game.currentRound();
+    //     round2.bet(20);
+    //     loseByBust(round2);
+    //     // game.finishRound();
+
+    //     expect(game.users[0].totalAmount).toBe(30);
+    //     expect(game.calculateAllowedMoves()).toEqual({
+    //         game: ["calculateAllowedMoves", "addUser", "removeUserById", "startNextRound"],
+    //         round: []
+    //     });
+    // })
 })

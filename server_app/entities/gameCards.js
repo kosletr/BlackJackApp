@@ -1,5 +1,6 @@
 const { getRandomInt, create3DArray } = require("../utils");
-const { ranks, suits, NUMBER_OF_DECKS, NUMBER_OF_RANKS, NUMBER_OF_SUITS, NUMBER_OF_CARDS } = require("./constants");
+const { ranks, suits, NUMBER_OF_RANKS, NUMBER_OF_SUITS, NUMBER_OF_CARDS } = require("./constants");
+const { NUMBER_OF_DECKS } = require("./config");
 const Card = require("./card");
 
 module.exports = class GameCards {

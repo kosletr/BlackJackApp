@@ -14,8 +14,6 @@ module.exports = class Participant extends User {
         this.cards.push(card);
         calculatePossibleScores(this.possibleScores, card);
         this.score = calculateScore(this.possibleScores);
-        if (this.isBust()) this.outcome = "DEFEAT";
-        if (!this.outcome) this.canBet = true;
     }
 
     isBust() {

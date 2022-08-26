@@ -1,8 +1,8 @@
 const { BEST_SCORE } = require("./constants");
 
-function loseByTakingTooManyCards(round) {
+function loseByBust(round) {
     while (round.selectedPlayer.score <= BEST_SCORE)
         round.hit();
 }
 
-module.exports = { loseByTakingTooManyCards };
+module.exports = { loseByBust };

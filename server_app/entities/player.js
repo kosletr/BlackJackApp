@@ -1,5 +1,5 @@
 const Participant = require("./participant");
-const { MIN_BET } = require("./constants");
+const { MIN_BET } = require("./config");
 
 module.exports = class Player extends Participant {
     constructor(id, name, totalAmount) {
@@ -16,5 +16,4 @@ module.exports = class Player extends Participant {
         this.currentBet += amount;
         this.canBet = false;
     }
-
 }

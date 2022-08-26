@@ -1,16 +1,20 @@
-const User = require("./user");
+const Participant = require("./participant");
+const { MIN_BET } = require("./constants");
 
-module.exports = class Player extends User {
-    constructor(name, totalAmount) {
-        super(name, totalAmount);
+module.exports = class Player extends Participant {
+    constructor(id, name, totalAmount) {
+        super(id, name, totalAmount);
         this.currentBet = 0;
+        this.outcome = null;
+        this.canBet = false;
     }
 
     bet(amount) {
-        if (amount > this.totalAmount)
-            throw new Error("Amount cannot exceed totalAmount: ", this.totalAmount);
+        if (amount <= MIN_BET || amount > this.totalAmount)
+            throw new Error("Invalid amount provided: ", this.totalAmount);
         this.totalAmount -= amount;
-        this.currentBet = amount;
+        this.currentBet += amount;
+        this.canBet = false;
     }
 
 }

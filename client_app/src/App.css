@@ -1,0 +1,13 @@
+.game {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 400px;
+    height: 400px;
+}
+
+.control {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}

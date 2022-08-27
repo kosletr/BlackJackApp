@@ -1,4 +1,5 @@
 const NUMBER_OF_DECKS = 2;
 const MIN_BET = 10;
+INITIAL_AMOUNT = 100;
 
-module.exports = { MIN_BET, NUMBER_OF_DECKS };
+module.exports = { INITIAL_AMOUNT, MIN_BET, NUMBER_OF_DECKS };

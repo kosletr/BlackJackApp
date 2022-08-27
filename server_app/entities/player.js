@@ -1,9 +1,9 @@
 const Participant = require("./participant");
-const { MIN_BET } = require("./config");
+const { INITIAL_AMOUNT, MIN_BET } = require("./config");
 
 module.exports = class Player extends Participant {
-    constructor(id, name, totalAmount) {
-        super(id, name, totalAmount);
+    constructor(id, name) {
+        super(id, name, INITIAL_AMOUNT);
         this.currentBet = 0;
         this.outcome = null;
         this.canBet = false;

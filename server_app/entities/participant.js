@@ -1,12 +1,13 @@
-const User = require("./user");
 const { BEST_SCORE } = require("./constants");
 
-module.exports = class Participant extends User {
+module.exports = class Participant {
     constructor(id, name, totalAmount) {
-        super(id, name, totalAmount);
+        this.id = id;
+        this.name = name;
         this.cards = [];
         this.possibleScores = new Set([0]);
         this.score = 0;
+        this.totalAmount = totalAmount;
     }
 
     pullACard(card) {

@@ -7,7 +7,7 @@ module.exports = class Round {
         this.id = generateUniqueId();
         this.players = players;
         this.playerIndex = 0;
-        this.turns = [];
+        this.allowedMoves = [];
         this.dealer = new Dealer(generateUniqueId());
         this.cards = new GameCards();
         this.#start();
@@ -23,54 +23,43 @@ module.exports = class Round {
         }
         this.selectedPlayer = this.dealer;
         this.hit();
-        this.selectedPlayer = this.players[this.playerIndex];
-        this.turns = [];
+        this.selectedPlayer = this.players[0];
         this.allowedMoves = ["bet"];
-        this.#saveTurn();
     }
 
 
-    bet(amount) {
+    bet({ amount }) {
         this.selectedPlayer.bet(amount);
         this.allowedMoves = ["hit", "stand"];
-        this.#saveTurn();
     }
 
     hit() {
         this.selectedPlayer.pullACard(this.cards.take());
-        this.allowedMoves = ["hit", "stand"];
+        this.allowedMoves = [];
         if (this.selectedPlayer.isBust()) {
             this.selectedPlayer.outcome = "DEFEAT";
             this.selectedPlayer.currentBet = 0;
-            this.allowedMoves = [];
-            this.playerIndex++;
-        } else if (!this.selectedPlayer.outcome) {
-            this.allowedMoves.push("bet");
+            this.stand();
+            return;
         }
-        this.#saveTurn();
+        this.allowedMoves = ["bet", "hit", "stand"];
     }
 
     stand() {
         if (++this.playerIndex < this.players.length) {
             this.selectedPlayer = this.players[this.playerIndex];
-            this.#saveTurn();
+            this.allowedMoves = ["bet"];
             return;
         }
         this.selectedPlayer = this.dealer;
         this.selectedPlayer.play(this);
+        this.selectedPlayer = null;
         this.#transferMoney();
         this.allowedMoves = [];
-        this.#saveTurn();
     }
 
     isActive() {
         return this.players.some(p => !p.outcome);
-    }
-
-    #saveTurn() {
-        const copy = JSON.parse(JSON.stringify(this));
-        delete copy.turns;
-        this.turns.push(copy);
     }
 
     #transferMoney() {

@@ -1,59 +1,69 @@
 const Round = require("./round");
 const Player = require("./player");
+const GameState = require("./gameState");
+const { generateUniqueId } = require("../utils");
 
 module.exports = class Game {
     constructor() {
-        this.users = [];
-        this.rounds = [];
-        this.allowedMoves = { game: [], round: [] };
+        this.id = generateUniqueId();
+        this.clients = new Set();
+        this.rounds = new Set();
+        this.allowedMoves = new Set();
+        this.currentRound;
+        this.commands = {
+            "startGame": this.startGame.bind(this),
+            "exitGame": this.exitGame.bind(this),
+        };
     }
 
-    execute(command) {
-        const moves = this.allowedMoves;
-        console.log(moves);
-        // if (!(command in moves)) throw new Error("Invalid command" + command);
-        this[command]();
+    validateRoundMoves(clientId, commandName) {
+        if (this.currentRound.selectedPlayer.id !== clientId) return "It is not your turn.";
+        if (!this.currentRound.allowedMoves.includes(commandName)) return `Command '${commandName}' is not allowed now.`;
     }
 
-    addUser(user) {
-        this.users.push(user);
-        this.allowedMoves.game = ["addUser", "removeUserById"];
-        const currentRound = this.currentRound();
-        if (!currentRound || !currentRound.isActive())
-            this.allowedMoves.game.push("startNextRound");
+    executeCommand(clientId, command) {
+        const commandHandler = this.commands[command.name];
+        commandHandler.call(this.currentRound, { playerId: clientId, ...command.params });
+        this.#informAllClients();
     }
 
-    removeUserById(id) {
-        this.users = this.users.filter(p => p.id !== id);
-        if (this.users.length === 0)
-            this.allowedMoves = { game: ["addUser"], round: [] };
+    addClient(client) {
+        this.clients.add(client);
+        this.allowedMoves.add("startGame");
+        this.#informAllClients();
     }
 
-    startNextRound() {
-        const players = this.users.map(u => new Player(u.id, u.name, u.totalAmount));
-        this.rounds.push(new Round(players));
-        this.allowedMoves = { game: ["addUser", "removeUserById"], round: this.currentRound().allowedMoves };
+    #informAllClients() {
+        const gameState = new GameState(this.allowedMoves, this.currentRound, this.getCurrentPlayers());
+        this.clients.forEach(c => c.inform(gameState.getState(c.id)));
     }
 
-    // finishRound() {
-    //     const currentRound = this.currentRound();
-    //     if (!currentRound) return;
-    //     if (currentRound.isActive())
-    //         throw new Error("Round is not completed.");
-    //     const newAmounts = currentRound.players.reduce((acc, p) => ({ ...acc, [p.id]: p.totalAmount }), {});
-    //     if (newAmounts)
-    //         this.users.forEach(u => u.totalAmount = newAmounts[u.id]);
-    // }
+    getCurrentPlayers() {
+        const players = [];
+        this.clients.forEach(c => players.push(new Player(c.id, c.name)));
+        return players;
+    }
 
-    // calculateAllowedMoves() {
-    //     if (this.users.length === 0)
-    //         return { game: ["calculateAllowedMoves", "addUser"], round: [] };
-    //     if (!lastRound || !lastRound.isActive())
-    //         return { game: ["calculateAllowedMoves", "addUser", "removeUserById", "startNextRound"], round: [] };
-    //     return { game: ["calculateAllowedMoves", "addUser", "removeUserById"], round: lastRound.allowedMoves };
-    // }
+    #updateCommandsForRound() {
+        this.commands["bet"] = this.currentRound.bet;
+        this.commands["hit"] = this.currentRound.hit;
+        this.commands["stand"] = this.currentRound.stand;
+    }
 
-    currentRound() {
-        return this.rounds[this.rounds.length - 1];
+    startGame() {
+        const players = this.getCurrentPlayers();
+        this.currentRound = new Round(players);
+        this.rounds.add(this.currentRound);
+        this.allowedMoves.delete("startGame");
+        this.allowedMoves.add("exitGame");
+        this.#updateCommandsForRound();
+    }
+
+    exitGame(clientId) {
+        this.clients = this.clients.filter(c => c.id !== clientId);
+    }
+
+    hasStarted() {
+        return this.currentRound && this.currentRound.isActive();
     }
 }

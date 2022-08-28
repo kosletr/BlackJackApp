@@ -1,8 +1,8 @@
-const Game = require("./game");
+const Game = require("../game/entities/game");
 const Client = require("./client");
-const { requiredParameters } = require("../constants");
+const { requiredParameters } = require("../game/constants");
 
-module.exports = class GameCommands {
+module.exports = class CommandHandler {
     constructor() {
         this.games = [];
         this.clients = new Map();

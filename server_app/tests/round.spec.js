@@ -1,13 +1,11 @@
-const Client = require("../game/entities/client");
+const Client = require("../server/client");
 const Player = require("../game/entities/player");
 const Round = require("../game/entities/round");
 const { loseByBust } = require("./testUtils");
 
 describe('Round', () => {
     let round;
-    let client1;
     let player1;
-    let client2;
     let player2;
 
     describe("No Players", () => {
@@ -18,7 +16,7 @@ describe('Round', () => {
 
     describe("One Player", () => {
         beforeEach(() => {
-            client1 = new Client(null, "Kostas");
+            const client1 = new Client(null, "Kostas");
             player1 = new Player(client1);
         })
 
@@ -68,9 +66,9 @@ describe('Round', () => {
 
     describe("Two Players", () => {
         beforeEach(() => {
-            client1 = new Client(null, "Kostas");
+            const client1 = new Client(null, "Kostas");
             player1 = new Player(client1);
-            client2 = new Client(null, "John");
+            const client2 = new Client(null, "John");
             player2 = new Player(client2);
         })
 
@@ -150,26 +148,4 @@ describe('Round', () => {
             expect(round.allowedMoves).toEqual([]);
         })
     })
-
-
-
-
-
-    // it("should have one winner and one loser when only a player is not bust.", () => {
-    //     round.addClient(player1);
-    //     round.addClient(player2);
-    //     round.startGame();
-
-    //     const round = round.currentRound;
-    //     round.dealer.play = loseByBust;
-
-    //     round.bet(50);
-    //     loseByBust(round);
-    //     round.bet(30);
-    //     round.stand();
-
-    //     expect(round.players[0].outcome).toBe("DEFEAT");
-    //     expect(round.players[1].outcome).toBe("WIN");
-    //     expect(round.allowedMoves).toEqual(["addClient", "removeClientById", "startGame"]);
-    // })
 })

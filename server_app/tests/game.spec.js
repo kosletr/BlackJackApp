@@ -1,4 +1,4 @@
-const Client = require("../game/entities/client");
+const Client = require("../server/client");
 const Game = require("../game/entities/game");
 const { loseByBust } = require("./testUtils");
 

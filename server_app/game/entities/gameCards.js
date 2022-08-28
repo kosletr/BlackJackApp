@@ -2,6 +2,7 @@ const { shuffleArray } = require("../../utils");
 const { ranks, suits, NUMBER_OF_RANKS, NUMBER_OF_SUITS, NUMBER_OF_CARDS } = require("../constants");
 const { NUMBER_OF_DECKS } = require("../configurations");
 const Card = require("./card");
+const GameError = require("./gameError");
 
 module.exports = class GameCards {
     constructor() {
@@ -11,7 +12,7 @@ module.exports = class GameCards {
 
     take() {
         if (this.size === 0)
-            throw new Error("Game: No cards left!");
+            throw new GameError("No cards left!");
         const card = this.remainingCards[--this.size]
         this.remainingCards[this.size] = null;
         return card;

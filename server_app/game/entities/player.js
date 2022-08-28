@@ -1,3 +1,4 @@
+const GameError = require("./gameError");
 const Participant = require("./participant");
 
 module.exports = class Player extends Participant {
@@ -11,7 +12,7 @@ module.exports = class Player extends Participant {
 
     bet(amount) {
         if (amount < 0 || amount > this.client.totalAmount)
-            throw new Error("Game: Invalid amount provided: ", this.client.totalAmount);
+            throw new GameError("Invalid amount provided: ", this.client.totalAmount);
         this.client.totalAmount -= amount;
         this.currentBet += amount;
         this.canBet = false;
@@ -32,7 +33,7 @@ module.exports = class Player extends Participant {
             this.outcome = "WIN";
             this.client.totalAmount += 2 * this.currentBet;
         } else {
-            throw new Error(`Game: Invalid state. PlayerId: ${this.id} Score: ${this.score} Dealer Score: ${this.dealer.score}`);
+            throw new GameError(`Invalid state. PlayerId: ${this.id} Score: ${this.score} Dealer Score: ${this.dealer.score}`);
         }
         this.currentBet = 0;
     }

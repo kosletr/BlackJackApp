@@ -1,6 +1,7 @@
 const GameCards = require("./gameCards");
 const Dealer = require("./dealer");
 const { generateUniqueId } = require("../../utils");
+const GameError = require("./gameError");
 
 module.exports = class Round {
     constructor(players) {
@@ -15,7 +16,7 @@ module.exports = class Round {
 
     #start() {
         if (this.players.length === 0)
-            throw new Error("Game: At least one player must join to start a new round.");
+            throw new GameError("At least one player must join to start a new round.");
         for (const player of this.players) {
             this.selectedPlayer = player;
             this.hit();

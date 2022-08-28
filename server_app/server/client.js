@@ -1,10 +1,10 @@
-const { generateUniqueId } = require("../../utils");
-const configurations = require("../configurations");
+const { generateUniqueId } = require("../utils");
+const configurations = require("../game/configurations");
 
 module.exports = class Client {
-    constructor(ws, name) {
+    constructor(connection, name) {
         this.id = generateUniqueId();
-        this.ws = ws;
+        this.connection = connection;
         this.name = name;
         this.gameId;
         this.totalAmount = configurations.INITIAL_AMOUNT;
@@ -12,7 +12,7 @@ module.exports = class Client {
 
     inform(state) {
         try {
-            this.ws.send(JSON.stringify({
+            this.connection.send(JSON.stringify({
                 status: 200,
                 clientId: this.id,
                 configurations,

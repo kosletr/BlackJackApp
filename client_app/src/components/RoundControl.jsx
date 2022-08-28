@@ -13,7 +13,7 @@ export default function RoundControl({ handlers, actions }) {
     const [bet, setBet] = useState(0);
 
     return (
-        <div className="playercontrol">
+        <div className="roundcontrol">
             <section className="bet-section">
                 <div className="bet">
                     <input placeholder="Bet" type="number" onChange={e => setBet(parseInt(e.target.value))}></input>

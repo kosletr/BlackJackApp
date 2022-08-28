@@ -1,17 +1,16 @@
-const { BEST_SCORE } = require("./constants");
+const { BEST_SCORE } = require("../constants");
 
 module.exports = class Participant {
-    constructor(id, name, totalAmount) {
+    constructor(id, name) {
         this.id = id;
         this.name = name;
         this.cards = [];
         this.possibleScores = new Set([0]);
         this.score = 0;
-        this.totalAmount = totalAmount;
     }
 
     pullACard(card) {
-        if (this.isBust()) throw new Error(`Cannot pull a card if the player lost. Score: ${this.score}`);
+        if (this.isBust()) throw new Error(`Game: Cannot pull a card if the player lost. Score: ${this.score}`);
         this.cards.push(card);
         calculatePossibleScores(this.possibleScores, card);
         this.score = calculateScore(this.possibleScores);

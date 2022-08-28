@@ -1,4 +1,4 @@
-const { NUMBER_OF_DECKS } = require("./config");
+const { NUMBER_OF_DECKS } = require("./configurations");
 
 const NUMBER_OF_RANKS = 13;
 const NUMBER_OF_SUITS = 4;
@@ -42,14 +42,24 @@ const requiredParameters = {
     }
 }
 
+const commands = Object
+    .values(requiredParameters)
+    .reduce((acc, curr) => ([...acc, ...Object.keys(curr)]), []);
+
+const paramConstraints = Object
+    .values(requiredParameters)
+    .reduce((acc, curr) => ({ ...acc, ...curr }), {});
+
 module.exports = {
     BEST_SCORE,
-    NUMBER_OF_SUITS,
-    NUMBER_OF_RANKS,
     NUMBER_OF_CARDS_PER_DECK,
     NUMBER_OF_CARDS,
-    ranks,
-    suits,
+    NUMBER_OF_RANKS,
+    NUMBER_OF_SUITS,
+    commands,
+    paramConstraints,
     points,
-    requiredParameters
+    ranks,
+    requiredParameters,
+    suits,
 };

@@ -1,6 +1,6 @@
 const Game = require("./game");
 const Client = require("./client");
-const { requiredParameters } = require("./constants");
+const { requiredParameters } = require("../constants");
 
 module.exports = class GameCommands {
     constructor() {
@@ -38,7 +38,15 @@ module.exports = class GameCommands {
     }
 
     removeClient(ws) {
-        const client = this.clients.get(ws);
-        this.clients.delete(client);
+        const clientToDisconnect = this.clients.get(ws);
+        for (const game of this.games) {
+            for (const client of game.clients) {
+                if (client.id === clientToDisconnect.id) {
+                    game.clients.delete(client);
+                    game.informAllClients();
+                }
+            }
+        }
+        this.clients.delete(clientToDisconnect);
     }
 }

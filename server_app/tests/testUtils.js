@@ -1,4 +1,4 @@
-const { BEST_SCORE } = require("./constants");
+const { BEST_SCORE } = require("../game/constants");
 
 function loseByBust(round) {
     const currentPlayer = round?.selectedPlayer;

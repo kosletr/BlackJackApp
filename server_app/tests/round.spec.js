@@ -1,10 +1,13 @@
-const Player = require("./player");
-const Round = require("./round");
+const Client = require("../game/entities/client");
+const Player = require("../game/entities/player");
+const Round = require("../game/entities/round");
 const { loseByBust } = require("./testUtils");
 
 describe('Round', () => {
     let round;
+    let client1;
     let player1;
+    let client2;
     let player2;
 
     describe("No Players", () => {
@@ -15,7 +18,8 @@ describe('Round', () => {
 
     describe("One Player", () => {
         beforeEach(() => {
-            player1 = new Player("1", "Kostas");
+            client1 = new Client(null, "Kostas");
+            player1 = new Player(client1);
         })
 
         it("should allow the first player to bet when a new round has just started.", () => {
@@ -64,8 +68,10 @@ describe('Round', () => {
 
     describe("Two Players", () => {
         beforeEach(() => {
-            player1 = new Player("1", "Kostas");
-            player2 = new Player("2", "John");
+            client1 = new Client(null, "Kostas");
+            player1 = new Player(client1);
+            client2 = new Client(null, "John");
+            player2 = new Player(client2);
         })
 
         it("should allow the first player to bet when a new round has just started.", () => {

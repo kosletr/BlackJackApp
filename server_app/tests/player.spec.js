@@ -1,5 +1,5 @@
-const Player = require("./player");
-const Card = require("./card");
+const Player = require("../game/entities/player");
+const Card = require("../game/entities/card");
 const { generateUniqueId } = require("../utils");
 
 describe('Player', () => {

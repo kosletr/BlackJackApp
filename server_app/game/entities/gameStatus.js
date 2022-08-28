@@ -37,7 +37,7 @@ function getPlayersState(players) {
         currentBet: p.currentBet,
         outcome: p.outcome,
         score: p.score,
-        totalAmount: p.totalAmount
+        totalAmount: p.client.totalAmount
     }))
 }
 

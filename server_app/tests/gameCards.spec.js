@@ -1,5 +1,5 @@
-const GameCards = require("./gameCards");
-const { NUMBER_OF_CARDS } = require("./constants");
+const GameCards = require("../game/entities/gameCards");
+const { NUMBER_OF_CARDS } = require("../game/constants");
 
 describe("GameCards", () => {
     let gameCards;

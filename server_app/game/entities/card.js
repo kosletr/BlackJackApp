@@ -1,4 +1,4 @@
-const { points } = require("./constants");
+const { points } = require("../constants");
 
 module.exports = class Card {
     constructor(rank, suit, deck = 0) {

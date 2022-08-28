@@ -19,9 +19,12 @@ function App() {
     };
 
     ws.onmessage = (message) => {
-      const gameState = JSON.parse(message.data);
-      console.log(gameState);
-      setData(gameState);
+      const response = JSON.parse(message.data);
+      if (response.status === 200) {
+        setData(response);
+        console.log(response);
+      }
+      else console.error(response);
     };
   }, []);
 

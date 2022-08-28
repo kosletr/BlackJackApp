@@ -46,10 +46,10 @@ export default function GameControl({ handlers, actions }) {
                 <button
                     name="disconnect"
                     onClick={() => handlers.handleDisconnect()}>
-                    Diisconnect
+                    Disconnect
                 </button>
                 <button
-                    onClick={() => { }}>
+                    onClick={() => handlers.handleInvalidCommand()}>
                     Invalid Command
                 </button>
             </div>

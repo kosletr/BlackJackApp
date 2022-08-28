@@ -34,12 +34,13 @@ export default class GameHandlers {
     handleExitGame() {
         this.#sendWebSocket({ name: "exitGame", params: {} })
     }
+
     handleDisconnect() {
         this.ws.close();
         console.log("WebSocket Client Disconnected");
     }
 
     handleInvalidCommand() {
-        this.#sendWebSocket({ name: "asdsad", params: {} })
+        this.#sendWebSocket({ name: "asdsad", params: { whatever: "" } })
     }
 }

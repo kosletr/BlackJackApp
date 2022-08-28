@@ -1,5 +1,4 @@
-let i = 0;
-
+// UUID v4
 function generateUniqueId() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -7,21 +6,14 @@ function generateUniqueId() {
     });
 }
 
-function getRandomInt(max) {
-    return Math.floor(Math.random() * max);
+// Modern version of the Fisher–Yates shuffle algorithm
+function shuffleArray(array) {
+    let j;
+    for (let i = array.length - 1; i >= 0; i--) {
+        j = Math.floor(Math.random() * i);
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
 }
 
-function create3DArray(layers, rows, columns) {
-    return Array.from({ length: layers }, () => (
-        Array.from({ length: rows }, () => (
-            Array.from({ length: columns }, () => null)
-        ))
-    ));
-}
-
-function sumOfArray(array) {
-    return array.reduce((sum, curr) => sum + curr, 0);
-}
-
-
-module.exports = { generateUniqueId, getRandomInt, create3DArray, sumOfArray }
+module.exports = { generateUniqueId, shuffleArray }

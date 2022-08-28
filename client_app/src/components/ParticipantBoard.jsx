@@ -18,6 +18,16 @@ export default function ParticipantBoard({ playerId, participant, turn }) {
             <div className="outcome">
                 {participant.outcome}
             </div>
+            {participant.totalAmount &&
+                <div className="totalAmount">
+                    Total: {participant.totalAmount}
+                </div>
+            }
+            {participant.currentBet &&
+                <div className="totalAmount">
+                    Bet: {participant.currentBet}
+                </div>
+            }
         </div>
     )
 }

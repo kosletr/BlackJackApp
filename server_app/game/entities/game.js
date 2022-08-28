@@ -1,7 +1,8 @@
 const Round = require("./round");
 const Player = require("./player");
 const GameState = require("./gameStatus");
-const { generateUniqueId } = require("../utils");
+const { generateUniqueId } = require("../../utils");
+const { MIN_BET } = require("../configurations");
 
 module.exports = class Game {
     constructor() {
@@ -23,8 +24,8 @@ module.exports = class Game {
     }
 
     startRound({ players }) {
-        const p = players || this.currentRound?.players;
-        this.currentRound = new Round(p);
+        this.currentRound = new Round(players || this.getCurrentPlayers());
+        this.currentRound.players.forEach(p => p.bet(MIN_BET));
         this.rounds.add(this.currentRound);
         this.allowedMoves.clear();
         this.allowedMoves.add("exitGame");
@@ -33,7 +34,7 @@ module.exports = class Game {
 
     getCurrentPlayers() {
         const players = [];
-        this.clients.forEach(c => players.push(new Player(c.id, c.name)));
+        this.clients.forEach(c => players.push(new Player(c)));
         return players;
     }
 
@@ -45,13 +46,13 @@ module.exports = class Game {
 
     executeCommand(clientId, command) {
         const commandHandler = this.commands[command.name];
-        commandHandler.call(this, { playerId: clientId, ...command.params });
+        commandHandler({ playerId: clientId, ...command.params });
         const shouldStartNextRound = !this.currentRound.isActive();
         if (shouldStartNextRound) this.allowedMoves.add("startRound");
-        this.#informAllClients();
+        this.informAllClients();
     }
 
-    #informAllClients() {
+    informAllClients() {
         const gameState = new GameState(this.allowedMoves, this.currentRound, this.getCurrentPlayers());
         this.clients.forEach(c => c.inform(gameState.getStatus(c.id)));
     }
@@ -80,6 +81,6 @@ module.exports = class Game {
     addClient(client) {
         this.clients.add(client);
         this.allowedMoves.add("startGame");
-        this.#informAllClients();
+        this.informAllClients();
     }
 }

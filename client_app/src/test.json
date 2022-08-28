@@ -1,0 +1,68 @@
+{
+    "status": 200,
+    "clientId": "cccf3816-3627-4974-bc26-3ed30cd4457e",
+    "configuration": {
+        "INITIAL_AMOUNT": 100,
+        "MIN_BET": 10,
+        "NUMBER_OF_DECKS": 2
+    },
+    "state": {
+        "allowedMoves": [
+            "exitGame",
+            "bet"
+        ],
+        "dealer": {
+            "id": "484ae881-4fd2-4d86-ad24-e8ba1c6add84",
+            "cards": [
+                {
+                    "rank": "K",
+                    "suit": "diamonds"
+                }
+            ],
+            "score": 10
+        },
+        "players": [
+            {
+                "id": "cccf3816-3627-4974-bc26-3ed30cd4457e",
+                "name": "Kostas",
+                "cards": [
+                    {
+                        "rank": "9",
+                        "suit": "clubs"
+                    },
+                    {
+                        "rank": "6",
+                        "suit": "diamonds"
+                    }
+                ],
+                "currentBet": 0,
+                "outcome": null,
+                "score": 15,
+                "totalAmount": 100
+            },
+            {
+                "id": "3816cccf4974--3627-bc26-cd43ed30457e",
+                "name": "John",
+                "cards": [
+                    {
+                        "rank": "3",
+                        "suit": "hearts"
+                    },
+                    {
+                        "rank": "10",
+                        "suit": "clubs"
+                    },
+                    {
+                        "rank": "6",
+                        "suit": "diamonds"
+                    }
+                ],
+                "currentBet": 0,
+                "outcome": null,
+                "score": 15,
+                "totalAmount": 100
+            }
+        ],
+        "selectedPlayerId": "cccf3816-3627-4974-bc26-3ed30cd4457e"
+    }
+}

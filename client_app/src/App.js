@@ -1,13 +1,17 @@
 import { useEffect, useState } from 'react';
 import './App.css';
+import table from './assets/table.png';
+import GameControl from './components/GameControl';
+import DealerBoard from './components/DealerBoard';
+import RoundControl from './components/RoundControl';
+import PlayersBoard from './components/PlayersBoard';
+import GameHandlers from './gameHandlers';
 
 const ws = new WebSocket('ws://localhost:3001/ws');
+const gameHandlers = new GameHandlers(ws);
 
 function App() {
-
-  const [bet, setBet] = useState(0);
-  const [playerName, setPlayerName] = useState("");
-
+  const [data, setData] = useState({});
 
   useEffect(() => {
     ws.onopen = () => {
@@ -15,41 +19,27 @@ function App() {
     };
 
     ws.onmessage = (message) => {
-      const game = JSON.parse(message.data);
-      console.log(game);
+      const gameState = JSON.parse(message.data);
+      console.log(gameState);
+      setData(gameState);
     };
   }, []);
 
-  function sendWebSocket(data) {
-    ws.send(JSON.stringify(data));
-  }
-
-  function handleDisconnect() {
-    ws.close();
-    console.log("WebSocket Client Disconnected")
-  }
-
   return (
     <div className='game'>
-      <div className='control'>
-        <div>
-          <input placeholder='name' type="text" onChange={e => setPlayerName(e.target.value)}></input>
-          <button name="registerClient" onClick={() => sendWebSocket({ name: "registerClient", params: { name: playerName } })}>Register</button>
+      <section className='dealerboard'>
+        <DealerBoard playerId={data?.clientId} dealer={data?.state?.dealer} turn={data?.state?.selectedPlayerId} />
+      </section>
+      <section className='gameboard'>
+        <GameControl handlers={gameHandlers} actions={data?.state?.allowedMoves} />
+        <div className='table'>
+          <img className='table__img' src={table} alt="BlackJack table"></img>
         </div>
-        <button name="startGame" onClick={() => sendWebSocket({ name: "startGame", params: {} })}>Start Game</button>
-        <div>
-          <input placeholder='bet' type="number" onChange={e => setBet(parseInt(e.target.value))}></input>
-          <button name="bet" onClick={() => sendWebSocket({ name: "bet", params: { amount: bet } })}>Bet</button>
-        </div>
-        <button name="hit" onClick={() => sendWebSocket({ name: "hit", params: {} })}>Hit</button>
-        <button name="stand" onClick={() => sendWebSocket({ name: "stand", params: {} })}>Stand</button>
-        <button name="exitGame" onClick={() => sendWebSocket({ name: "exitGame", params: {} })}>Exit Game</button>
-        <button name="Diisconnect" onClick={handleDisconnect}>Diisconnect</button>
-        <button onClick={() => sendWebSocket({ name: "asdsad", params: {} })}>Invalid Command</button>
-      </div>
-      <div>
-
-      </div>
+        <RoundControl handlers={gameHandlers} actions={data?.state?.allowedMoves} />
+      </section>
+      <section>
+        <PlayersBoard playerId={data?.clientId} players={data?.state?.players} turn={data?.state?.selectedPlayerId} />
+      </section>
     </div>
   );
 }

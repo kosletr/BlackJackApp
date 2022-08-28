@@ -1,13 +1,104 @@
 .game {
     display: flex;
+    flex-direction: column;
+    gap: 10px;
     justify-content: center;
     align-items: center;
-    width: 400px;
-    height: 400px;
+    padding: 10px;
+    margin: 0 auto;
 }
 
-.control {
+.gameboard {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+}
+
+.playercontrol {
+    max-width: 25%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 10px;
+}
+
+
+.hit-stand-section {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+
+.controlopts {
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+.table {
+    display: flex;
+    justify-content: center;
+    width: 38%;
+}
+
+.table__img {
+    border-radius: 15px;
+    width: 100%;
+}
+
+.participant {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 10px 50px;
+    gap: 10px;
+}
+
+.participant__info {
+    font-size: 1.2rem;
+}
+
+.participant__info--active {
+    font-weight: bold;
+}
+
+.players {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.cards {
+    display: flex;
+    gap: 15px;
+}
+
+.card {
+    width: 75px;
+}
+
+.deck {
+    width: 85px;
+}
+
+.leaderboard {
+    width: 25%;
+}
+
+.outcome {
+    height: 20px;
+    font-size: larger;
+    font-weight: bold;
+}
+
+.control__img {
+    cursor: pointer;
+    max-width: 67px;
+    max-height: 90px;
+}
+
+.control__img--disabled {
+    cursor: default;
 }

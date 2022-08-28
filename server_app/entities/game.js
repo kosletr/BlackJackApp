@@ -1,6 +1,6 @@
 const Round = require("./round");
 const Player = require("./player");
-const GameState = require("./gameState");
+const GameState = require("./gameStatus");
 const { generateUniqueId } = require("../utils");
 
 module.exports = class Game {
@@ -12,30 +12,23 @@ module.exports = class Game {
         this.currentRound;
         this.commands = {
             "startGame": this.startGame.bind(this),
+            "startRound": this.startRound.bind(this),
             "exitGame": this.exitGame.bind(this),
         };
     }
 
-    validateRoundMoves(clientId, commandName) {
-        if (this.currentRound.selectedPlayer.id !== clientId) return "It is not your turn.";
-        if (!this.currentRound.allowedMoves.includes(commandName)) return `Command '${commandName}' is not allowed now.`;
+    startGame() {
+        const players = this.getCurrentPlayers();
+        this.startRound({ players });
     }
 
-    executeCommand(clientId, command) {
-        const commandHandler = this.commands[command.name];
-        commandHandler.call(this.currentRound, { playerId: clientId, ...command.params });
-        this.#informAllClients();
-    }
-
-    addClient(client) {
-        this.clients.add(client);
-        this.allowedMoves.add("startGame");
-        this.#informAllClients();
-    }
-
-    #informAllClients() {
-        const gameState = new GameState(this.allowedMoves, this.currentRound, this.getCurrentPlayers());
-        this.clients.forEach(c => c.inform(gameState.getState(c.id)));
+    startRound({ players }) {
+        const p = players || this.currentRound?.players;
+        this.currentRound = new Round(p);
+        this.rounds.add(this.currentRound);
+        this.allowedMoves.clear();
+        this.allowedMoves.add("exitGame");
+        this.#updateCommandsForRound();
     }
 
     getCurrentPlayers() {
@@ -45,25 +38,48 @@ module.exports = class Game {
     }
 
     #updateCommandsForRound() {
-        this.commands["bet"] = this.currentRound.bet;
-        this.commands["hit"] = this.currentRound.hit;
-        this.commands["stand"] = this.currentRound.stand;
+        this.commands["bet"] = this.currentRound.bet.bind(this.currentRound);
+        this.commands["hit"] = this.currentRound.hit.bind(this.currentRound);
+        this.commands["stand"] = this.currentRound.stand.bind(this.currentRound);
     }
 
-    startGame() {
-        const players = this.getCurrentPlayers();
-        this.currentRound = new Round(players);
-        this.rounds.add(this.currentRound);
-        this.allowedMoves.delete("startGame");
-        this.allowedMoves.add("exitGame");
-        this.#updateCommandsForRound();
+    executeCommand(clientId, command) {
+        const commandHandler = this.commands[command.name];
+        commandHandler.call(this, { playerId: clientId, ...command.params });
+        const shouldStartNextRound = !this.currentRound.isActive();
+        if (shouldStartNextRound) this.allowedMoves.add("startRound");
+        this.#informAllClients();
     }
 
-    exitGame(clientId) {
-        this.clients = this.clients.filter(c => c.id !== clientId);
+    #informAllClients() {
+        const gameState = new GameState(this.allowedMoves, this.currentRound, this.getCurrentPlayers());
+        this.clients.forEach(c => c.inform(gameState.getStatus(c.id)));
     }
 
     hasStarted() {
         return this.currentRound && this.currentRound.isActive();
+    }
+
+    exitGame({ clientId }) {
+        for (const c of this.clients)
+            if (c.id === clientId)
+                this.clients.delete(c);
+        this.allowedMoves.clear();
+        this.allowedMoves.add("startGame");
+    }
+
+    validateRoundMoves(clientId, commandName) {
+        if (this.currentRound.selectedPlayer.id !== clientId) return "It is not your turn.";
+        if (!this.currentRound.allowedMoves.includes(commandName)) return `Command '${commandName}' is not allowed now.`;
+    }
+
+    validateGameMoves(commandName) {
+        if (!this.allowedMoves.has(commandName)) return `Command '${commandName}' is not allowed now.`;
+    }
+
+    addClient(client) {
+        this.clients.add(client);
+        this.allowedMoves.add("startGame");
+        this.#informAllClients();
     }
 }

@@ -5,7 +5,8 @@ module.exports = class Dealer extends Participant {
         super(id, "Dealer", Number.MAX_SAFE_INTEGER);
     }
 
-    play(round) {
+    play(round) { // TODO: Make dealer smarter than that. 
         round.hit();
+        round.stand();
     }
 }

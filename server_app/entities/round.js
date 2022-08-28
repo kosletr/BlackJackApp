@@ -46,16 +46,20 @@ module.exports = class Round {
     }
 
     stand() {
-        if (++this.playerIndex < this.players.length) {
+        this.playerIndex++;
+        if (this.playerIndex < this.players.length) {
             this.selectedPlayer = this.players[this.playerIndex];
             this.allowedMoves = ["bet"];
             return;
+        } else if (this.playerIndex === this.players.length) {
+            this.selectedPlayer = this.dealer;
+            this.selectedPlayer.play(this);
+        } else {
+            // nextRound();
+            this.selectedPlayer = null;
+            this.#transferMoney();
+            this.allowedMoves = [];
         }
-        this.selectedPlayer = this.dealer;
-        this.selectedPlayer.play(this);
-        this.selectedPlayer = null;
-        this.#transferMoney();
-        this.allowedMoves = [];
     }
 
     isActive() {

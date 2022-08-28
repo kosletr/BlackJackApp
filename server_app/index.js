@@ -2,14 +2,18 @@ const config = require('config');
 const WebSocket = require('ws');
 const { requiredParameters } = require('./entities/constants');
 const GameCommands = require('./entities/gameCommands');
+const GameStatus = require('./entities/gameStatus');
 
 const port = process.env.PORT || config.get("port");
 const wss = new WebSocket.Server({ port });
 const gameCommands = new GameCommands();
 
+const paramConstraints = Object.values(requiredParameters).flat();
+
 const requests = {
     registerClient: gameCommands.handleRegisterCommand,
     startGame: gameCommands.handleGameCommand,
+    startRound: gameCommands.handleGameCommand,
     exitGame: gameCommands.handleGameCommand,
     bet: gameCommands.handleGameCommand,
     hit: gameCommands.handleGameCommand,
@@ -28,7 +32,8 @@ wss.on('connection', (ws) => {
 
 function handleClientConnection(ws) {
     console.log("New client connected!");
-    webSocketSend(ws, { status: 200, message: "Welcome. Please register to play!" });
+    const initialState = new GameStatus(["registerClient"], null, []).getStatus(null);
+    webSocketSend(ws, { status: 200, message: "Welcome. Please register to play!", state: initialState });
 }
 
 function handleClientDisconnection(ws) {
@@ -57,7 +62,7 @@ function validateCommandName(commandName) {
 
 function validateCommandParams(commandName, commandParams) {
     if (!commandParams) return "Missing Parameters: params";
-    const missingParams = new Set(requiredParameters[commandName]);
+    const missingParams = new Set(paramConstraints[commandName]);
     Object.keys(commandParams).forEach(p => commandParams[p] && missingParams.delete(p));
     if (missingParams.size > 0)
         return `Missing Parameters from params: ${JSON.stringify([...missingParams])}`;

@@ -1,5 +1,6 @@
 const Game = require("./game");
 const Client = require("./client");
+const { requiredParameters } = require("./constants");
 
 module.exports = class GameCommands {
     constructor() {
@@ -25,14 +26,14 @@ module.exports = class GameCommands {
     }
 
     handleGameCommand(ws, command) {
-        const { id: clientId, gameId } = this.clients.get(ws);
+        const client = this.clients.get(ws);
+        if (!client) return "Client is not registered.";
+        const { id: clientId, gameId } = client;
         const game = this.games.find(g => g.id === gameId);
-        if (game.hasStarted()) {
-            const error = game.validateRoundMoves(clientId, command.name);
-            if (error) return error;
-        } else {
-            
-        }
+        const error = Object.keys(requiredParameters.gameCommands).includes(command.name)
+            ? game.validateGameMoves(command.name)
+            : game.validateRoundMoves(clientId, command.name);
+        if (error) return error;
         game.executeCommand(clientId, command);
     }
 

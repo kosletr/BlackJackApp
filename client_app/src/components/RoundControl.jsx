@@ -24,7 +24,7 @@ export default function RoundControl({ handlers, actions }) {
                 <div className="hit">
                     <img
                         name="hit"
-                        className={"control__img" + (canHit ? "" : " control__img--disabled")}
+                        className={"roundcontrol__img" + (canHit ? "" : " roundcontrol__img--disabled")}
                         src={canHit ? deck : deck_disabled}
                         alt="A deck of cards."
                         onClick={() => canHit && handlers.handleHit()}
@@ -32,7 +32,7 @@ export default function RoundControl({ handlers, actions }) {
                 </div>
                 <div className="stand">
                     <img name="stand"
-                        className={"control__img" + (canStand ? "" : " control__img--disabled")}
+                        className={"roundcontrol__img" + (canStand ? "" : " roundcontrol__img--disabled")}
                         src={canStand ? stand : stand_disabled}
                         alt="A closed palm facing front indicitaing that the player stands."
                         onClick={() => canStand && handlers.handleStand()}

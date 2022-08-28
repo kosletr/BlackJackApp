@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import './App.css';
-import table from './assets/table.png';
 import GameControl from './components/GameControl';
 import DealerBoard from './components/DealerBoard';
 import RoundControl from './components/RoundControl';
 import PlayersBoard from './components/PlayersBoard';
 import GameHandlers from './gameHandlers';
+import GameTable from './components/GameTable';
 
 const ws = new WebSocket('ws://localhost:3001/ws');
 const gameHandlers = new GameHandlers(ws);
@@ -23,26 +23,19 @@ function App() {
       if (response.status === 200) {
         setData(response);
         console.log(response);
+      } else {
+        console.error(response);
       }
-      else console.error(response);
     };
   }, []);
 
   return (
     <div className='game'>
-      <section className='dealerboard'>
-        <DealerBoard playerId={data?.clientId} dealer={data?.state?.dealer} turn={data?.state?.selectedPlayerId} />
-      </section>
-      <section className='gameboard'>
-        <GameControl handlers={gameHandlers} actions={data?.state?.allowedMoves} />
-        <div className='table'>
-          <img className='table__img' src={table} alt="BlackJack table"></img>
-        </div>
-        <RoundControl handlers={gameHandlers} actions={data?.state?.allowedMoves} />
-      </section>
-      <section>
-        <PlayersBoard playerId={data?.clientId} players={data?.state?.players} turn={data?.state?.selectedPlayerId} />
-      </section>
+      <DealerBoard playerId={data?.clientId} dealer={data?.state?.dealer} turn={data?.state?.selectedPlayerId} />
+      <GameControl handlers={gameHandlers} actions={data?.state?.allowedMoves} />
+      <GameTable />
+      <RoundControl handlers={gameHandlers} actions={data?.state?.allowedMoves} />
+      <PlayersBoard playerId={data?.clientId} players={data?.state?.players} turn={data?.state?.selectedPlayerId} />
     </div>
   );
 }

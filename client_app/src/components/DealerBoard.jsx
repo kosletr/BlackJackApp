@@ -3,6 +3,8 @@ import ParticipantBoard from './ParticipantBoard';
 
 export default function DealerBoard({ playerId, dealer, turn }) {
     return (
-        <ParticipantBoard playerId={playerId} participant={dealer} turn={turn} />
+        <div className='dealerboard'>
+            <ParticipantBoard playerId={playerId} participant={dealer} turn={turn} />
+        </div>
     )
 }

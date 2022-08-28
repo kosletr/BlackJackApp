@@ -10,7 +10,7 @@ export default function GameControl({ handlers, actions }) {
     const canExitGame = actions?.includes("exitGame");
 
     return (
-        <div>
+        <div className='gamecontrol'>
             <div>
                 <input
                     placeholder='Player Name'
@@ -53,6 +53,6 @@ export default function GameControl({ handlers, actions }) {
                     Invalid Command
                 </button>
             </div>
-        </div >
+        </div>
     )
 }

@@ -41,7 +41,7 @@ module.exports = class CommandHandler {
         const clientToDisconnect = this.clients.get(ws);
         for (const game of this.games) {
             for (const client of game.clients) {
-                if (client.id === clientToDisconnect.id) {
+                if (client.id === clientToDisconnect?.id) {
                     game.clients.delete(client);
                     game.informAllClients();
                 }

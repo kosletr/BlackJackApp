@@ -4,24 +4,44 @@
         "dealerboard dealerboard dealerboard"
         "gamecontrol table       roundcontrol"
         "playersboard playersboard playersboard";
-    gap: 10px;
     justify-content: center;
     align-items: center;
     padding: 10px;
-    margin: 0 auto;
+    height: 100%;
+}
+
+.registration_form {
+    display: flex;
+    justify-content: center;
+    margin: 20px;
+    min-width: 300px;
 }
 
 .dealerboard {
+    position: relative;
     grid-area: dealerboard;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    min-height: 180px;
+    border: 2px solid lightgreen;
+    border-radius: 15px;
+    margin: 10px;
 }
 
 .gamecontrol {
     grid-area: gamecontrol;
+    display: flex;
+    justify-content: center;
     margin: 20px;
+    min-width: 300px;
 }
 
 .table {
-    height: 300px;
+    min-height: 150px;
+    max-height: 350px;
+    min-width: 250px;
+    max-width: 550px;
     grid-area: table;
     display: flex;
     justify-content: center;
@@ -42,15 +62,17 @@
 
 .roundcontrol__img {
     cursor: pointer;
-    max-width: 67px;
-    max-height: 90px;
+    max-width: 70px;
+    max-height: 70px;
 }
 
 .roundcontrol__img--disabled {
     cursor: default;
 }
 
-.bet-section {}
+.bet-section {
+    display: flex;
+}
 
 .hit-stand-section {
     display: flex;
@@ -62,6 +84,19 @@
     display: flex;
     justify-content: space-evenly;
     align-items: center;
+    min-height: 180px;
+    border: 2px solid lightgreen;
+    border-radius: 15px;
+    margin: 10px;
+    position: relative;
+}
+
+.playersboard h1,
+.dealerboard h1 {
+    position: absolute;
+    align-self: start;
+    left: 10px;
+    top: 5px;
 }
 
 .participant {

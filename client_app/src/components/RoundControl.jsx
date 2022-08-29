@@ -3,6 +3,8 @@ import stand from "../assets/stand.png";
 import stand_disabled from "../assets/stand_disabled.png";
 import deck from "../assets/deck.png";
 import deck_disabled from "../assets/deck_disabled.png";
+import bet_img from "../assets/bet.png";
+import bet_img_disabled from "../assets/bet_disabled.png";
 import { useState } from "react";
 
 export default function RoundControl({ handlers, actions }) {
@@ -10,15 +12,31 @@ export default function RoundControl({ handlers, actions }) {
     const canHit = actions?.includes("hit");
     const canStand = actions?.includes("stand");
 
-    const [bet, setBet] = useState(0);
+    const [bet, setBet] = useState();
+
+    function handleBetButton() {
+        if (!canBet) return;
+        handlers.handleBet(bet);
+        setBet('');
+    }
 
     return (
         <div className="roundcontrol">
             <section className="bet-section">
-                <div className="bet">
-                    <input placeholder="Bet" type="number" onChange={e => setBet(parseInt(e.target.value))}></input>
-                    <button name="bet" onClick={() => handlers.handleBet(bet)} disabled={!canBet} >Bet</button>
-                </div>
+                <input
+                    placeholder="Bet"
+                    type="number"
+                    onChange={e => setBet(parseInt(e.target.value))}
+                    disabled={!canBet}
+                    value={bet}
+                />
+                <img
+                    name="bet"
+                    className={"roundcontrol__img" + (canBet ? "" : " roundcontrol__img--disabled")}
+                    src={canBet ? bet_img : bet_img_disabled}
+                    alt="Casino chips indicating that the player wants to bet."
+                    onClick={handleBetButton}
+                />
             </section>
             <section className="hit-stand-section">
                 <div className="hit">
@@ -38,6 +56,7 @@ export default function RoundControl({ handlers, actions }) {
                         onClick={() => canStand && handlers.handleStand()}
                     />
                 </div>
+                <div></div>
             </section>
         </div>
     )

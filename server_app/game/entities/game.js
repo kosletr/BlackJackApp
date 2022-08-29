@@ -47,7 +47,7 @@ module.exports = class Game {
     executeCommand(clientId, command) {
         const commandHandler = this.commands[command.name];
         commandHandler({ playerId: clientId, ...command.params });
-        const shouldStartNextRound = !this.currentRound.isActive();
+        const shouldStartNextRound = this.currentRound && !this.currentRound.isActive();
         if (shouldStartNextRound) this.allowedMoves.add("startRound");
         this.informAllClients();
     }

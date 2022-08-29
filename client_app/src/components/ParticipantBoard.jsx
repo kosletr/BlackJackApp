@@ -15,16 +15,17 @@ export default function ParticipantBoard({ playerId, participant, turn }) {
                 {participant.cards.map((c, idx) => <Card key={idx} rank={c.rank} suit={c.suit} />)}
                 {showFlippedCard && <Card />}
             </div>
-            <div className="outcome">
+            {participant.outcome && <div className="outcome">
                 {participant.outcome}
             </div>
+            }
             {participant.totalAmount &&
                 <div className="totalAmount">
                     Total: {participant.totalAmount}
                 </div>
             }
-            {participant.currentBet &&
-                <div className="totalAmount">
+            {Boolean(participant.currentBet) &&
+                <div className="currentBet">
                     Bet: {participant.currentBet}
                 </div>
             }

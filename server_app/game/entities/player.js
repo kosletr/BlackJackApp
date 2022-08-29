@@ -12,7 +12,7 @@ module.exports = class Player extends Participant {
 
     bet(amount) {
         if (amount < 0 || amount > this.client.totalAmount)
-            throw new GameError("Invalid amount provided: ", this.client.totalAmount);
+            throw new GameError("Invalid amount provided: "+ amount);
         this.client.totalAmount -= amount;
         this.currentBet += amount;
         this.canBet = false;

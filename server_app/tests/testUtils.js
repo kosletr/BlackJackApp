@@ -1,9 +1,8 @@
-const { BEST_SCORE } = require("../game/constants");
+const { BEST_SCORE, OUTCOMES } = require("../game/constants");
 
 function loseByBust(round) {
-    const currentPlayer = round?.selectedPlayer;
-    const currentId = currentPlayer.id;
-    while (currentPlayer.id = currentId && currentPlayer.score <= BEST_SCORE)
+    const currentId = round?.selectedPlayer?.id;
+    while (round?.selectedPlayer?.id === currentId && round?.selectedPlayer?.score <= BEST_SCORE)
         round.hit();
 }
 

@@ -1,6 +1,5 @@
 const Client = require("../server/client");
 const Game = require("../game/entities/game");
-const { loseByBust } = require("./testUtils");
 
 describe('game', () => {
     let game;

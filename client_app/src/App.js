@@ -40,7 +40,7 @@ function App() {
       <DealerBoard playerId={data?.clientId} dealer={data?.state?.dealer} turn={data?.state?.selectedPlayerId} />
       <GameControl handlers={gameHandlers} actions={data?.state?.allowedMoves} />
       <GameTable />
-      <RoundControl handlers={gameHandlers} actions={data?.state?.allowedMoves} />
+      <RoundControl handlers={gameHandlers} actions={data?.state?.allowedMoves} configurations={data?.configurations} />
       <PlayersBoard playerId={data?.clientId} players={data?.state?.players} turn={data?.state?.selectedPlayerId} />
     </div>
   </>

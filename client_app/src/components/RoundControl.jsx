@@ -11,7 +11,7 @@ import doubledown from "../assets/doubledown.png";
 import doubledown_disabled from "../assets/doubledown_disabled.png";
 import { useState } from "react";
 
-export default function RoundControl({ handlers, actions }) {
+export default function RoundControl({ handlers, actions, configurations }) {
     const canBet = actions?.includes("bet");
     const canHit = actions?.includes("hit");
     const canStand = actions?.includes("stand");
@@ -28,6 +28,11 @@ export default function RoundControl({ handlers, actions }) {
 
     return (
         <div className="roundcontrol">
+            {configurations &&
+                <section>
+                    Min Bet: {configurations?.MIN_BET}
+                </section>
+            }
             <section className="bet-section">
                 <input
                     placeholder="Bet"

@@ -1,5 +1,5 @@
-const getGameState = require('../game/entities/gameState');
 const CommandHandler = require('./commandHandler');
+const configurations = require("../game/configurations");
 
 module.exports = class ConnectionHandler {
     constructor() {
@@ -19,7 +19,7 @@ module.exports = class ConnectionHandler {
 
     handleClientConnection(connection) {
         console.log("New client connected!");
-        const initialState = { allowedMoves: ["registerClient"] };
+        const initialState = { allowedMoves: ["registerClient"], configurations };
         sendToClient(connection, { status: 200, message: "Welcome. Please register to play!", state: initialState });
     }
 

@@ -3,12 +3,13 @@ const { commands, paramConstraints } = require('../game/constants');
 module.exports = function validateRequest(data) {
     try {
         const { name, params } = JSON.parse(data);
+        console.log(name, params);
         const request = { name, params };
         const error = validateCommandName(name) || validateCommandParams(name, params);
         if (error) return { error, request };
         return { request };
     } catch (err) {
-        console.log(err);
+        console.error(err);
         return { error: "Cannot parse the request.", request: data };
     }
 }

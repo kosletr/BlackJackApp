@@ -35,10 +35,12 @@ module.exports = class Player extends Participant {
 
     transferMoney(dealer) {
         if (this.isBust()) this.lose();
-        else if (dealer.isBust()) this.win()
+        else if (dealer.isBust()) this.win();
+        else if (this.hasBlackJack() && !dealer.hasBlackJack()) this.win(3 / 2);
+        else if (!this.hasBlackJack() && dealer.hasBlackJack()) this.lose();
         else if (this.score < dealer.score) this.lose();
-        else if (this.score > dealer.score) this.win()
-        else if (this.score === dealer.score) this.handleEqualScores(dealer);
+        else if (this.score > dealer.score) this.win();
+        else if (this.score === dealer.score) this.tie();
         else throw new GameError(`Invalid state.`);
     }
 
@@ -51,12 +53,6 @@ module.exports = class Player extends Participant {
     lose() {
         this.outcome = OUTCOMES.DEFEAT;
         this.currentBet = 0;
-    }
-
-    handleEqualScores(dealer) {
-        if (this.hasBlackJack() && !dealer.hasBlackJack()) this.win(3 / 2);
-        else if (!this.hasBlackJack() && dealer.hasBlackJack()) this.lose();
-        else this.tie();
     }
 
     tie() {

@@ -76,6 +76,13 @@ describe('Player', () => {
         expect(player.score).toBe(16);
     })
 
+    it("should return { 21 } when the sequence is: A, Q.", () => {
+        player.takeACard(new Card("A", "swords"));
+        player.takeACard(new Card("Q", "cups"));
+        expect(player.possibleScores).toEqual(new Set([11, 21]));
+        expect(player.score).toBe(21);
+    })
+
     it("should throw an error when the player has lost and trys to takeACard.", () => {
         player.takeACard(new Card("10", "swords"));
         player.takeACard(new Card("10", "cups"));

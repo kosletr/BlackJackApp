@@ -14,7 +14,7 @@ module.exports = class Round {
         this.gameCards = new GameCards();
         this._selectedPlayer = this._players[0];
         this._allowedMoves = ["bet"];
-        this.hasDealt = false;
+        this.areCardsDealt = false;
     }
 
     bet({ amount }) {
@@ -39,19 +39,22 @@ module.exports = class Round {
             this.hit();
             this.hit();
         }
-        this._selectedPlayer = this.dealer;
-        this.hit();
-        this.playerIndex = 0;
-        this._selectedPlayer = this._players[this.playerIndex];
-        this.hasDealt = true;
+        if (this._selectedPlayer !== null) { // Last player had a blackjack.
+            this._selectedPlayer = this.dealer;
+            this.hit();
+            this.playerIndex = 0;
+            this._selectedPlayer = this._players[this.playerIndex];
+        }
+        this.areCardsDealt = true;
     }
 
     #canDoubleDown(amount) {
-        return this._selectedPlayer.cards.length === 2 &&
-            2 * amount <= this._selectedPlayer.client.totalAmount;
+        return this._selectedPlayer?.cards.length === 2 &&
+            2 * amount <= this._selectedPlayer?.client.totalAmount;
     }
 
     #canSplit() {
+        if (!this._selectedPlayer) return false;
         if (this._selectedPlayer.cards.length !== 2) return false;
         const firstCard = this._selectedPlayer.cards[0];
         const isAnAceCard = firstCard.points.length > 1;

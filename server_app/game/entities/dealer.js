@@ -7,7 +7,7 @@ module.exports = class Dealer extends Participant {
     }
 
     play(round) {
-        const anyPlayersLeft = round.players.some(p => !p.outcome);
+        const anyPlayersLeft = round.players.some(p => !p.isBust());
         if (anyPlayersLeft)
             while (this.score < DEALER_MIN_STAND_SCORE)
                 round.hit();

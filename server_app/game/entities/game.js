@@ -77,7 +77,7 @@ module.exports = class Game {
     exitGame({ clientId }) {
         const client = this.clients.find(c => c.id === clientId);
         if (!client) throw new GameError("Client not found.");
-        this.allowedMoves = ["exitGame"];
+        this.allowedMoves = ["startGame"];
         this.removeClient(client);
     }
 
@@ -98,7 +98,7 @@ module.exports = class Game {
     }
 
     getCurrentClientId() {
-        return this.currentRound?.selectedPlayer?.client.id;
+        return this.currentRound?.selectedPlayer?.client?.id;
     }
 
     addClient(client) {

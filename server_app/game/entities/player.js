@@ -13,7 +13,7 @@ module.exports = class Player extends Participant {
 
     bet(amount) {
         if (amount < MIN_BET || amount > this.client.totalAmount)
-            throw new GameError("Invalid amount provided: " + amount);
+            throw new GameError(`Wager should be between the minimum bet (${MIN_BET}) and your total (${this.client.totalAmount})`);
         this.client.totalAmount -= amount;
         this.currentBet += amount;
     }

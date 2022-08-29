@@ -21,12 +21,12 @@ function getPlayersState(players) {
     if (!players) return;
     return players.map(p => ({
         id: p.id,
-        clientId: p.client.id,
         name: p.name,
         cards: getCardsState(p.cards),
         currentBet: p.currentBet,
         outcome: p.outcome,
         score: p.score,
+        clientId: p.client.id,
         totalAmount: p.client.totalAmount
     }))
 }

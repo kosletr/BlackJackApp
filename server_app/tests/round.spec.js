@@ -29,15 +29,17 @@ describe('Round', () => {
 
         it("should allow the first player to hit or stand when the first player chooses to bet.", () => {
             round = new Round([player1]);
-            round.bet(50);
+            round.bet({ amount: 50 });
 
             expect(round.selectedPlayer.id).toBe(player1.id);
-            expect(round.allowedMoves).toEqual(["hit", "stand"]);
+            expect(round.allowedMoves).toContain("hit");
+            expect(round.allowedMoves).toContain("stand");
+            expect(round.allowedMoves).toContain("doubledown");
         })
 
         it("should not be able to do anything when player chooses to stand.", () => {
             round = new Round([player1]);
-            round.bet(50);
+            round.bet({ amount: 50 });
             round.stand();
 
             expect(round.allowedMoves).toEqual([]);
@@ -45,7 +47,7 @@ describe('Round', () => {
 
         it("should not be able to do anything when player loses.", () => {
             round = new Round([player1]);
-            round.bet(50);
+            round.bet({ amount: 50 });
             loseByBust(round);
 
             expect(round.players[0].outcome).toBe("DEFEAT");
@@ -56,7 +58,7 @@ describe('Round', () => {
             round = new Round([player1]);
             round.dealer.play = loseByBust;
 
-            round.bet(50);
+            round.bet({ amount: 50 });
             round.stand();
 
             expect(round.players[0].outcome).toBe("WIN");
@@ -79,47 +81,44 @@ describe('Round', () => {
             expect(round.allowedMoves).toEqual(["bet"]);
         })
 
-        it("should allow the first player to hit or stand when the first player chooses to bet.", () => {
+        it("should allow the second player to bet when the first player submited their bet.", () => {
             round = new Round([player1, player2]);
-            round.bet(50);
-
-            expect(round.selectedPlayer.id).toBe(player1.id);
-            expect(round.allowedMoves).toEqual(["hit", "stand"]);
-        })
-
-        it("should allow the second player to bet when the first player chooses to stand.", () => {
-            round = new Round([player1, player2]);
-            round.bet(50);
-            round.stand();
+            round.bet({ amount: 50 });
 
             expect(round.selectedPlayer.id).toBe(player2.id);
             expect(round.allowedMoves).toEqual(["bet"]);
         })
 
-        it("should allow the second player to bet when the first player busts.", () => {
+        it("should allow the first player to play when the second player submited their bet.", () => {
             round = new Round([player1, player2]);
-            round.bet(50);
+            round.bet({ amount: 50 });
+            round.bet({ amount: 50 });
+
+            expect(round.selectedPlayer.id).toBe(player1.id);
+            expect(round.allowedMoves).toContain("hit");
+            expect(round.allowedMoves).toContain("stand");
+            expect(round.allowedMoves).toContain("doubledown");
+        })
+
+        it("should allow the second player to play when the first player busts.", () => {
+            round = new Round([player1, player2]);
+            round.bet({ amount: 50 });
+            round.bet({ amount: 50 });
             loseByBust(round);
 
             expect(round.selectedPlayer.id).toBe(player2.id);
             expect(round.players[0].outcome).toBe("DEFEAT");
             expect(round.players[1].outcome).toBeFalsy();
-            expect(round.allowedMoves).toEqual(["bet"]);
-        })
-
-        it("should allow the second player to hit or stand when the second player chooses to bet.", () => {
-            round = new Round([player1, player2]);
-            round.stand();
-            round.bet(50);
-
-            expect(round.selectedPlayer.id).toBe(player2.id);
-            expect(round.allowedMoves).toEqual(["hit", "stand"]);
+            expect(round.allowedMoves).toContain("hit");
+            expect(round.allowedMoves).toContain("stand");
+            expect(round.allowedMoves).toContain("doubledown");
         })
 
         it("should not be able to do anything when the second player chooses to stand.", () => {
             round = new Round([player1, player2]);
+            round.bet({ amount: 50 });
+            round.bet({ amount: 50 });
             round.stand();
-            round.bet(50);
             round.stand();
 
             expect(round.allowedMoves).toEqual([]);
@@ -127,8 +126,9 @@ describe('Round', () => {
 
         it("should not be able to do anything when the second player loses.", () => {
             round = new Round([player1, player2]);
+            round.bet({ amount: 50 });
+            round.bet({ amount: 50 });
             round.stand();
-            round.bet(50);
             loseByBust(round);
 
             expect(round.players[1].outcome).toBe("DEFEAT");
@@ -138,9 +138,9 @@ describe('Round', () => {
         it("should have two winners when dealer looses.", () => {
             round = new Round([player1, player2]);
             round.dealer.play = loseByBust;
+            round.bet({ amount: 50 });
+            round.bet({ amount: 50 });
             round.stand();
-
-            round.bet(50);
             round.stand();
 
             expect(round.players[0].outcome).toBe("WIN");

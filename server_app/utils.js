@@ -1,3 +1,5 @@
+const configurations = require("./game/configurations");
+
 // UUID v4
 function generateUniqueId() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -16,4 +18,19 @@ function shuffleArray(array) {
     return array;
 }
 
-module.exports = { generateUniqueId, shuffleArray }
+function sendValidState(connection, data) {
+    try {
+        const { id, state, ...others } = data;
+        connection.send(JSON.stringify({
+            status: 200,
+            clientId: id,
+            configurations,
+            state,
+            ...others
+        }));
+    } catch (error) {
+        console.error("ERROR", error);
+    }
+}
+
+module.exports = { generateUniqueId, shuffleArray, sendValidState }

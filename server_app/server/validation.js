@@ -22,7 +22,7 @@ function validateCommandName(commandName) {
 function validateCommandParams(commandName, commandParams) {
     if (!commandParams) return "Missing Parameters: params";
     const missingParams = new Set(paramConstraints[commandName]);
-    Object.keys(commandParams).forEach(p => commandParams[p] && missingParams.delete(p));
+    Object.keys(commandParams).forEach(p => (commandParams[p] || commandParams[p] === 0) && missingParams.delete(p));
     if (missingParams.size > 0)
         return `Missing Parameters from params: ${JSON.stringify([...missingParams])}`;
 }

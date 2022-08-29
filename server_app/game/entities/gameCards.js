@@ -10,9 +10,8 @@ module.exports = class GameCards {
         this.size = NUMBER_OF_CARDS;
     }
 
-    take() {
-        if (this.size === 0)
-            throw new GameError("No cards left!");
+    draw() {
+        if (this.size === 0) throw new GameError("No cards left!");
         const card = this.remainingCards[--this.size]
         this.remainingCards[this.size] = null;
         return card;

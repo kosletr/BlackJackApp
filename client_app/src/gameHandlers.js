@@ -31,16 +31,24 @@ export default class GameHandlers {
         this.#sendWebSocket({ name: "stand", params: {} })
     }
 
+    handleSplit() {
+        this.#sendWebSocket({ name: "split", params: {} })
+    }
+
+    handleDoubleDown() {
+        this.#sendWebSocket({ name: "doubledown", params: {} })
+    }
+
     handleExitGame() {
         this.#sendWebSocket({ name: "exitGame", params: {} })
     }
 
-    handleDisconnect() {
-        this.ws.close();
-        console.log("WebSocket Client Disconnected");
-    }
+    // handleDisconnect() {
+    //     this.ws.close();
+    //     console.log("WebSocket Client Disconnected");
+    // }
 
-    handleInvalidCommand() {
-        this.#sendWebSocket({ name: "asdsad", params: { whatever: "" } })
-    }
+    // handleInvalidCommand() {
+    //     this.#sendWebSocket({ name: "asdsad", params: { whatever: "" } })
+    // }
 }

@@ -1,12 +1,16 @@
+const { DEALER_MIN_STAND_SCORE } = require("../constants");
 const Participant = require("./participant");
 
 module.exports = class Dealer extends Participant {
-    constructor(id) {
-        super(id, "Dealer", Number.MAX_SAFE_INTEGER);
+    constructor() {
+        super("Dealer", Number.MAX_SAFE_INTEGER);
     }
 
-    play(round) { // TODO: Make dealer smarter than that. 
-        round.hit();
+    play(round) {
+        const anyPlayersLeft = round.players.some(p => !p.outcome);
+        if (anyPlayersLeft)
+            while (this.score < DEALER_MIN_STAND_SCORE)
+                round.hit();
         round.stand();
     }
 }

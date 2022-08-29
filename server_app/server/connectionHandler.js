@@ -1,4 +1,4 @@
-const GameStatus = require('../game/entities/gameStatus');
+const getGameState = require('../game/entities/gameState');
 const CommandHandler = require('./commandHandler');
 
 module.exports = class ConnectionHandler {
@@ -6,24 +6,26 @@ module.exports = class ConnectionHandler {
         this.commandHandler = new CommandHandler();
         this.commands = {
             registerClient: this.commandHandler.handleRegisterCommand,
-            startGame: this.commandHandler.handleGameCommand,
+            startGame: this.commandHandler.handleStartGameCommand,
+            exitGame: this.commandHandler.handleExitGameCommand,
             startRound: this.commandHandler.handleGameCommand,
-            exitGame: this.commandHandler.handleGameCommand,
             bet: this.commandHandler.handleGameCommand,
             hit: this.commandHandler.handleGameCommand,
             stand: this.commandHandler.handleGameCommand,
+            split: this.commandHandler.handleGameCommand,
+            doubledown: this.commandHandler.handleGameCommand,
         }
     }
 
     handleClientConnection(connection) {
         console.log("New client connected!");
-        const initialState = new GameStatus(["registerClient"], null, []).getStatus(null);
+        const initialState = { allowedMoves: ["registerClient"] };
         sendToClient(connection, { status: 200, message: "Welcome. Please register to play!", state: initialState });
     }
 
     handleClientDisconnection(connection) {
         console.log("Client disconnected!");
-        this.commandHandler.removeClient(connection);
+        this.commandHandler.handleDisconnection(connection);
     }
 
     handleRequest(connection, command) {

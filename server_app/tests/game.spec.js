@@ -17,13 +17,13 @@ describe('game', () => {
         beforeEach(() => game = new Game())
 
         it("should throw an error when a new game is started without any players.", () => {
-            expect(() => game.startGame()).toThrow();
+            expect(() => game.startRound()).toThrow("players");
         })
 
         it("should allow the client to start the game when there is at least one player", () => {
             game.addClient(client1);
 
-            expect(game.allowedMoves).toEqual(new Set(["startGame"]));
+            expect(game.allowedMoves).toEqual(["startGame"]);
         })
     })
 
@@ -32,9 +32,9 @@ describe('game', () => {
 
         it("should allow the client to exit the game when a new game is started", () => {
             game.addClient(client1);
-            game.startGame();
+            game.startRound();
 
-            expect(game.allowedMoves).toEqual(new Set(["exitGame"]));
+            expect(game.allowedMoves).toEqual(["exitGame"]);
         })
     })
 

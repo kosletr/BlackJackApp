@@ -11,19 +11,19 @@ describe("GameCards", () => {
     })
 
     it("should contain one less card when a card is pulled.", () => {
-        gameCards.take();
+        gameCards.draw();
         expect(gameCards.size).toBe(NUMBER_OF_CARDS - 1);
     })
 
     it("should contain no cards when all the cards are pulled.", () => {
         for (let i = 0; i < NUMBER_OF_CARDS; i++)
-            gameCards.take();
+            gameCards.draw();
         expect(gameCards.size).toBe(0);
     })
 
     it("should throw an error when there are no cards and a card is pulled.", () => {
         for (let i = 0; i < NUMBER_OF_CARDS; i++)
-            gameCards.take();
-        expect(() => gameCards.take()).toThrow();
+            gameCards.draw();
+        expect(() => gameCards.draw()).toThrow();
     })
 })

@@ -3,6 +3,7 @@ const { NUMBER_OF_DECKS } = require("./configurations");
 const NUMBER_OF_RANKS = 13;
 const NUMBER_OF_SUITS = 4;
 const BEST_SCORE = 21;
+const DEALER_MIN_STAND_SCORE = 17;
 
 const NUMBER_OF_CARDS_PER_DECK = NUMBER_OF_SUITS * NUMBER_OF_RANKS; // The two Jokers are omitted.
 const NUMBER_OF_CARDS = NUMBER_OF_DECKS * NUMBER_OF_CARDS_PER_DECK;
@@ -26,6 +27,12 @@ const points = {
 const suits = ["clubs", "diamonds", "hearts", "spades"];
 const ranks = Object.keys(points);
 
+const OUTCOMES = {
+    WIN: "WIN",
+    DEFEAT: "DEFEAT",
+    TIE: "TIE"
+}
+
 const requiredParameters = {
     clientCommands: {
         registerClient: ["name"],
@@ -39,6 +46,8 @@ const requiredParameters = {
         bet: ["amount"],
         hit: [],
         stand: [],
+        doubledown: [],
+        split: []
     }
 }
 
@@ -52,10 +61,12 @@ const paramConstraints = Object
 
 module.exports = {
     BEST_SCORE,
+    DEALER_MIN_STAND_SCORE,
     NUMBER_OF_CARDS_PER_DECK,
     NUMBER_OF_CARDS,
     NUMBER_OF_RANKS,
     NUMBER_OF_SUITS,
+    OUTCOMES,
     commands,
     paramConstraints,
     points,

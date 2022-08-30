@@ -1,4 +1,4 @@
-const { DEALER_MIN_STAND_SCORE } = require("../constants");
+const { DEALER_MIN_STAND_SCORE } = require("../configurations");
 const Participant = require("./participant");
 
 module.exports = class Dealer extends Participant {

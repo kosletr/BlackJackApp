@@ -3,6 +3,7 @@ const Player = require("./player");
 const getGameState = require("./gameState");
 const { generateUniqueId } = require("../../utils");
 const GameError = require("./gameError");
+const { ACTIONS } = require("../constants");
 
 module.exports = class Game {
     constructor() {
@@ -31,11 +32,11 @@ module.exports = class Game {
     }
 
     #updateCommandsForNewRound() {
-        this.commands["bet"] = this.currentRound.bet.bind(this.currentRound);
-        this.commands["hit"] = this.currentRound.hit.bind(this.currentRound);
-        this.commands["stand"] = this.currentRound.stand.bind(this.currentRound);
-        this.commands["split"] = this.currentRound.split.bind(this.currentRound);
-        this.commands["doubledown"] = this.currentRound.doubledown.bind(this.currentRound);
+        this.commands[ACTIONS.BET] = this.currentRound.bet.bind(this.currentRound);
+        this.commands[ACTIONS.HIT] = this.currentRound.hit.bind(this.currentRound);
+        this.commands[ACTIONS.STAND] = this.currentRound.stand.bind(this.currentRound);
+        this.commands[ACTIONS.SPLIT] = this.currentRound.split.bind(this.currentRound);
+        this.commands[ACTIONS.DOUBLE_DOWN] = this.currentRound.doubledown.bind(this.currentRound);
     }
 
     executeCommand(clientId, command) {

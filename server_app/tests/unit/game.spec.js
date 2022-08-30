@@ -1,5 +1,5 @@
-const Client = require("../server/client");
-const Game = require("../game/entities/game");
+const Client = require("../../server/client");
+const Game = require("../../game/entities/game");
 
 describe('game', () => {
     let game;

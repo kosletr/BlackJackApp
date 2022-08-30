@@ -33,6 +33,14 @@ const OUTCOMES = {
     TIE: "TIE"
 }
 
+const ACTIONS = {
+    BET: "bet",
+    HIT: "hit",
+    STAND: "stand",
+    SPLIT: "split",
+    DOUBLE_DOWN: "doubledown",
+}
+
 const requiredParameters = {
     clientCommands: {
         registerClient: ["name"],
@@ -60,6 +68,7 @@ const paramConstraints = Object
     .reduce((acc, curr) => ({ ...acc, ...curr }), {});
 
 module.exports = {
+    ACTIONS,
     BEST_SCORE,
     DEALER_MIN_STAND_SCORE,
     NUMBER_OF_CARDS_PER_DECK,

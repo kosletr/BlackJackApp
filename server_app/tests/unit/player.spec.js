@@ -1,11 +1,11 @@
-const Player = require("../game/entities/player");
-const Card = require("../game/entities/card");
-const { generateUniqueId } = require("../utils");
+const Player = require("../../game/entities/player");
+const Card = require("../../game/entities/card");
+const Client = require("../../server/client");
 
 describe('Player', () => {
     let player;
 
-    beforeEach(() => player = new Player(generateUniqueId(), "Kostas", 100))
+    beforeEach(() => player = new Player(new Client(null, "Kostas")))
 
     it("should return { 5 } when the sequence is: 5.", () => {
         player.takeACard(new Card("5", "swords"));

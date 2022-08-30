@@ -14,6 +14,7 @@ module.exports = class GameCards {
         if (this.size === 0) throw new GameError("No cards left!");
         const card = this.remainingCards[--this.size]
         this.remainingCards[this.size] = null;
+        // console.log(card.rank);
         return card;
     }
 }

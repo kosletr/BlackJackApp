@@ -1,5 +1,6 @@
 const CommandHandler = require('./commandHandler');
 const configurations = require("../game/configurations");
+const winston = require('winston');
 
 module.exports = class ConnectionHandler {
     constructor() {
@@ -18,13 +19,13 @@ module.exports = class ConnectionHandler {
     }
 
     handleClientConnection(connection) {
-        console.log("New client connected!");
+        winston.info("New client connected!");
         const initialState = { allowedMoves: ["registerClient"], configurations };
         sendToClient(connection, { status: 200, message: "Welcome. Please register to play!", state: initialState });
     }
 
     handleClientDisconnection(connection) {
-        console.log("Client disconnected!");
+        winston.info("Client disconnected!");
         this.commandHandler.handleDisconnection(connection);
     }
 

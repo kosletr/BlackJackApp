@@ -1,10 +1,11 @@
+const winston = require("winston");
 const { commands, paramConstraints } = require('../game/constants');
 
 module.exports = function validateRequest(data) {
     try {
         const { name, params } = JSON.parse(data);
-        console.log(name, params);
         const request = { name, params };
+        winston.info("Request: " + JSON.stringify(request));
         const error = validateCommandName(name) || validateCommandParams(name, params);
         if (error) return { error, request };
         return { request };

@@ -10,11 +10,15 @@
     "test:unit": "jest --watchAll --verbose tests/unit",
     "test:int": "jest --watchAll --verbose tests/int"
   },
+  "engines": {
+    "node": "16.17.0"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "config": "^3.3.7",
+    "winston": "^3.8.1",
     "ws": "^8.8.1"
   },
   "devDependencies": {

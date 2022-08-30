@@ -92,3 +92,6 @@ Tests are also implemented to validate the behavior of the game.
 
 ### Multiplayer game with two players.
 ![](screenshots/two_players.png)
+
+
+## By Konstantinos Letros

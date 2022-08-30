@@ -1,12 +1,12 @@
 const config = require('config');
 const WebSocket = require('ws');
+const winston = require('winston');
 const ConnectionHandler = require("./server/connectionHandler");
 const GameError = require('./game/entities/gameError');
 const validateRequest = require('./server/validation');
 
-
 const port = process.env.PORT || config.get("port");
-const wss = new WebSocket.Server({ port }, console.log(`Listening on port ${port}.`));
+const wss = new WebSocket.Server({ port }, winston.info(`Listening on port ${port}.`));
 const connHandlers = new ConnectionHandler();
 
 wss.on('connection', (ws) => {

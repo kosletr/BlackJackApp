@@ -9,7 +9,9 @@ import PlayersBoard from './components/PlayersBoard';
 import GameHandlers from './gameHandlers';
 import GameTable from './components/GameTable';
 
-const ws = new WebSocket('ws://localhost:3001/ws');
+const blackjack_api = process.env.BLACKJACK_API || "localhost:3000"
+
+const ws = new WebSocket(`ws://${blackjack_api}/ws`);
 const gameHandlers = new GameHandlers(ws);
 
 function App() {

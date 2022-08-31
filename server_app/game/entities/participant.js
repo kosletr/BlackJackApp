@@ -23,7 +23,11 @@ module.exports = class Participant {
     }
 
     hasBlackJack() {
-        return this.cards.length === 2 && this.score === BEST_SCORE;
+        return this.cards.length === 2 && this.hasBestScore();
+    }
+
+    hasBestScore() {
+        return this.score === BEST_SCORE;
     }
 }
 

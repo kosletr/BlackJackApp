@@ -58,7 +58,7 @@ describe('Round', () => {
             expect(round.allowedMoves).toContain(ACTIONS.DOUBLE_DOWN);
         })
 
-        it("should not be able to do anything when player chooses to stand (cannot have a blackjack).", () => {
+        it("should not be able to do anything when player chooses to stand (no blackjack).", () => {
             round.gameCards = drawCustomCards([
                 { rank: '10', suit: 'clubs' }, { rank: '2', suit: 'clubs' },
                 { rank: '10', suit: 'clubs' }
@@ -70,7 +70,7 @@ describe('Round', () => {
             expect(round.isInProgress()).toBeFalsy();
         })
 
-        it("should not be able to do anything when player loses (cannot have a blackjack).", () => {
+        it("should not be able to do anything when player loses (no blackjack).", () => {
             round.gameCards = drawCustomCards([
                 { rank: '10', suit: 'clubs' }, { rank: '2', suit: 'clubs' },
                 { rank: '10', suit: 'clubs' },
@@ -99,7 +99,7 @@ describe('Round', () => {
             expect(round.isInProgress()).toBeFalsy();
         })
 
-        it("should have a tie (blackjack) when dealer has the same score with the player.", () => {
+        it("should have a tie when both the dealer and the player have a blackjack.", () => {
             round.gameCards = drawCustomCards([
                 { rank: '10', suit: 'clubs' }, { rank: 'A', suit: 'clubs' },
                 { rank: 'A', suit: 'clubs' }, { rank: 'K', suit: 'clubs' }
@@ -112,10 +112,38 @@ describe('Round', () => {
             expect(round.isInProgress()).toBeFalsy();
         })
 
-        it("should have a tie when dealer has the same score with the player.", () => {
+        it("should be a win when the the player has a blackjack and the dealer gets 21.", () => {
             round.gameCards = drawCustomCards([
-                { rank: '10', suit: 'clubs' }, { rank: '8', suit: 'clubs' },
-                { rank: 'Q', suit: 'clubs' }, { rank: '8', suit: 'clubs' }
+                { rank: '10', suit: 'clubs' }, { rank: 'A', suit: 'clubs' },
+                { rank: 'A', suit: 'clubs' }, { rank: '2', suit: 'clubs' }, { rank: '8', suit: 'clubs' }
+            ]);
+
+            round.bet({ amount: 50 });
+
+            expect(round.players[0].outcome).toBe(OUTCOMES.WIN);
+            expect(round.allowedMoves).toEqual([]);
+            expect(round.isInProgress()).toBeFalsy();
+        })
+
+        it("should be a defeat when the the player has a 21 and the dealer gets a blackjack.", () => {
+            round.gameCards = drawCustomCards([
+                { rank: 'A', suit: 'clubs' }, { rank: 'K', suit: 'clubs' },
+                { rank: '2', suit: 'clubs' },
+                { rank: '8', suit: 'clubs' }, { rank: 'A', suit: 'clubs' }
+            ]);
+
+            round.bet({ amount: 50 });
+            round.hit();
+
+            expect(round.players[0].outcome).toBe(OUTCOMES.DEFEAT);
+            expect(round.allowedMoves).toEqual([]);
+            expect(round.isInProgress()).toBeFalsy();
+        })
+
+        it("should have a tie when dealer has the same score with the player (except blackjacks/21s).", () => {
+            round.gameCards = drawCustomCards([
+                { rank: '10', suit: 'clubs' }, { rank: 'Q', suit: 'clubs' },
+                { rank: '8', suit: 'clubs' }, { rank: '8', suit: 'clubs' }
             ]);
 
             round.bet({ amount: 50 });
@@ -155,8 +183,8 @@ describe('Round', () => {
             it("should allow the second player to play when the first player has a blackjack and the second does not.", () => {
                 round = new Round([player1, player2]);
                 round.gameCards = drawCustomCards([
-                    { rank: 'A', suit: 'clubs' }, { rank: 'K', suit: 'clubs' },
-                    { rank: '10', suit: 'clubs' }, { rank: '2', suit: 'clubs' },
+                    { rank: 'A', suit: 'clubs' }, { rank: '10', suit: 'clubs' }, { rank: '2', suit: 'clubs' },
+                    { rank: 'K', suit: 'clubs' }, { rank: '2', suit: 'clubs' }
                 ]);
 
                 round.bet({ amount: 50 });
@@ -172,28 +200,47 @@ describe('Round', () => {
             it("should not be able to do anything when the second player has a blackjack.", () => {
                 round = new Round([player1, player2]);
                 round.gameCards = drawCustomCards([
-                    { rank: 'A', suit: 'clubs' }, { rank: '2', suit: 'clubs' },
-                    { rank: 'A', suit: 'clubs' }, { rank: 'K', suit: 'clubs' }
+                    { rank: '8', suit: 'clubs' }, { rank: 'A', suit: 'clubs' }, { rank: '5', suit: 'clubs' },
+                    { rank: 'K', suit: 'clubs' }, { rank: 'K', suit: 'clubs' }
                 ]);
 
                 round.bet({ amount: 50 });
                 round.bet({ amount: 50 });
                 round.stand();
 
+                expect(player2.outcome).toBe(OUTCOMES.WIN);
                 expect(round.allowedMoves).toEqual([]);
                 expect(round.isInProgress()).toBeFalsy();
             })
 
-            it("should not be able to do anything when both players have a blackjack.", () => {
+            it("should not be able to do anything when both players have a blackjack and dealer does not.", () => {
                 round = new Round([player1, player2]);
                 round.gameCards = drawCustomCards([
-                    { rank: 'A', suit: 'clubs' }, { rank: 'K', suit: 'clubs' },
-                    { rank: 'A', suit: 'clubs' }, { rank: 'K', suit: 'clubs' }
+                    { rank: 'A', suit: 'clubs' }, { rank: 'A', suit: 'clubs' }, { rank: '3', suit: 'clubs' },
+                    { rank: 'K', suit: 'clubs' }, { rank: 'K', suit: 'clubs' }
                 ]);
 
                 round.bet({ amount: 50 });
                 round.bet({ amount: 50 });
 
+                expect(player1.outcome).toBe(OUTCOMES.WIN);
+                expect(player2.outcome).toBe(OUTCOMES.WIN);
+                expect(round.allowedMoves).toEqual([]);
+                expect(round.isInProgress()).toBeFalsy();
+            })
+
+            it("should not be able to do anything when both players and dealers have a blackjack.", () => {
+                round = new Round([player1, player2]);
+                round.gameCards = drawCustomCards([
+                    { rank: 'A', suit: 'clubs' }, { rank: 'A', suit: 'clubs' }, { rank: 'A', suit: 'clubs' },
+                    { rank: 'K', suit: 'clubs' }, { rank: 'K', suit: 'clubs' }, { rank: 'K', suit: 'clubs' }
+                ]);
+
+                round.bet({ amount: 50 });
+                round.bet({ amount: 50 });
+
+                expect(player1.outcome).toBe(OUTCOMES.TIE);
+                expect(player2.outcome).toBe(OUTCOMES.TIE);
                 expect(round.allowedMoves).toEqual([]);
                 expect(round.isInProgress()).toBeFalsy();
             })
@@ -203,9 +250,8 @@ describe('Round', () => {
             it("should allow the first player (cannot have a blackjack) to play when the second player submited their bet.", () => {
                 round = new Round([player1, player2]);
                 round.gameCards = drawCustomCards([
-                    { rank: '10', suit: 'clubs' }, { rank: 'J', suit: 'clubs' },
-                    { rank: '10', suit: 'clubs' }, { rank: 'A', suit: 'clubs' },
-                    { rank: '10', suit: 'clubs' }, { rank: 'A', suit: 'clubs' },
+                    { rank: '10', suit: 'clubs' }, { rank: '10', suit: 'clubs' }, { rank: '10', suit: 'clubs' },
+                    { rank: 'J', suit: 'clubs' }, { rank: 'A', suit: 'clubs' }, { rank: 'A', suit: 'clubs' },
                 ]);
                 round.bet({ amount: 50 });
                 round.bet({ amount: 50 });
@@ -220,10 +266,8 @@ describe('Round', () => {
             it("should allow the second player to play when the first player busts (cannot have a blackjack).", () => {
                 round = new Round([player1, player2]);
                 round.gameCards = drawCustomCards([
-                    { rank: '10', suit: 'clubs' }, { rank: '2', suit: 'clubs' },
-                    { rank: 'Q', suit: 'clubs' }, { rank: 'Q', suit: 'clubs' },
-                    { rank: 'Q', suit: 'clubs' },
-                    { rank: 'Q', suit: 'clubs' },
+                    { rank: '10', suit: 'clubs' }, { rank: 'Q', suit: 'clubs' }, { rank: 'Q', suit: 'clubs' },
+                    { rank: '2', suit: 'clubs' }, { rank: 'Q', suit: 'clubs' }, { rank: 'Q', suit: 'clubs' },
                 ]);
 
                 round.bet({ amount: 50 });
@@ -240,13 +284,12 @@ describe('Round', () => {
                 expect(round.allowedMoves).toContain(ACTIONS.SPLIT);
             })
 
-            it("should allow the second player to split if the first player has hit even though cards are even.", () => {
+            it("should allow the second player to play if the first player has hit and received 21.", () => {
                 round = new Round([player1, player2]);
                 round.gameCards = drawCustomCards([
-                    { rank: '5', suit: 'clubs' }, { rank: '5', suit: 'clubs' },
-                    { rank: 'J', suit: 'clubs' }, { rank: '8', suit: 'clubs' },
-                    { rank: '2', suit: 'clubs' },
-                    { rank: 'A', suit: 'clubs' }, // player 1 has 21 so, its players' 2 turn
+                    { rank: '5', suit: 'clubs' }, { rank: 'J', suit: 'clubs' }, { rank: '2', suit: 'clubs' },
+                    { rank: '5', suit: 'clubs' }, { rank: '8', suit: 'clubs' },
+                    { rank: 'A', suit: 'clubs' }
                 ]);
 
                 round.bet({ amount: 50 });
@@ -257,12 +300,11 @@ describe('Round', () => {
                 expect(round.allowedMoves).toContain(ACTIONS.DOUBLE_DOWN);
             })
 
-            it("should not be able to split after player has hit even though cards are even.", () => {
+            it("should not be able to split after player has hit.", () => {
                 round = new Round([player1, player2]);
                 round.gameCards = drawCustomCards([
-                    { rank: '5', suit: 'clubs' }, { rank: '5', suit: 'clubs' },
-                    { rank: 'J', suit: 'clubs' }, { rank: '8', suit: 'clubs' },
-                    { rank: '2', suit: 'clubs' },
+                    { rank: '5', suit: 'clubs' }, { rank: 'J', suit: 'clubs' }, { rank: '2', suit: 'clubs' },
+                    { rank: '5', suit: 'clubs' }, { rank: '8', suit: 'clubs' },
                     { rank: '2', suit: 'clubs' },
                 ]);
 
@@ -274,12 +316,11 @@ describe('Round', () => {
                 expect(round.allowedMoves).not.toContain(ACTIONS.DOUBLE_DOWN);
             })
 
-            it("should not be able to do anything when the second player (cannot have a blackjack) chooses to stand.", () => {
+            it("should not be able to do anything when the second player (no blackjack) chooses to stand.", () => {
                 round = new Round([player1, player2]);
                 round.gameCards.draw = round.gameCards = drawCustomCards([
-                    { rank: '10', suit: 'clubs' }, { rank: '2', suit: 'clubs' },
-                    { rank: '10', suit: 'clubs' }, { rank: 'K', suit: 'clubs' },
-                    { rank: '10', suit: 'clubs' }
+                    { rank: '10', suit: 'clubs' }, { rank: '10', suit: 'clubs' }, { rank: '10', suit: 'clubs' },
+                    { rank: '2', suit: 'clubs' }, { rank: 'K', suit: 'clubs' },
                 ]);
 
                 round.bet({ amount: 50 });
@@ -294,9 +335,8 @@ describe('Round', () => {
             it("should not be able to do anything when the second player busts.", () => {
                 round = new Round([player1, player2]);
                 round.gameCards = drawCustomCards([
-                    { rank: '10', suit: 'clubs' }, { rank: 'J', suit: 'clubs' },
-                    { rank: 'Q', suit: 'clubs' }, { rank: '2', suit: 'clubs' },
-                    { rank: '10', suit: 'clubs' },
+                    { rank: '10', suit: 'clubs' }, { rank: 'Q', suit: 'clubs' }, { rank: '10', suit: 'clubs' },
+                    { rank: 'J', suit: 'clubs' }, { rank: '2', suit: 'clubs' },
                     { rank: 'K', suit: 'clubs' },
                 ]);
 
@@ -313,9 +353,8 @@ describe('Round', () => {
             it("should have two winners when dealer looses (cannot have a blackjack).", () => {
                 round = new Round([player1, player2]);
                 round.gameCards = drawCustomCards([
-                    { rank: '10', suit: 'clubs' }, { rank: 'J', suit: 'clubs' },
-                    { rank: 'Q', suit: 'clubs' }, { rank: 'K', suit: 'clubs' },
-                    { rank: 'J', suit: 'clubs' },
+                    { rank: '10', suit: 'clubs' }, { rank: 'Q', suit: 'clubs' }, { rank: 'J', suit: 'clubs' },
+                    { rank: 'J', suit: 'clubs' }, { rank: 'K', suit: 'clubs' },
                     { rank: '2', suit: 'clubs' }, { rank: 'K', suit: 'clubs' },
                 ]);
 
@@ -334,11 +373,9 @@ describe('Round', () => {
                 it("should have double the amount of the bet when player wins.", () => {
                     round = new Round([player1, player2]);
                     round.gameCards = drawCustomCards([
-                        { rank: '10', suit: 'clubs' }, { rank: '5', suit: 'clubs' },
-                        { rank: '10', suit: 'clubs' }, { rank: '5', suit: 'clubs' },
-                        { rank: '10', suit: 'clubs' },
-                        { rank: '5', suit: 'clubs' },
-                        { rank: '7', suit: 'clubs' },
+                        { rank: '10', suit: 'clubs' }, { rank: '10', suit: 'clubs' }, { rank: '10', suit: 'clubs' },
+                        { rank: '5', suit: 'clubs' }, { rank: '5', suit: 'clubs' },
+                        { rank: '5', suit: 'clubs' }, { rank: '7', suit: 'clubs' },
                     ]);
 
                     round.bet({ amount: 50 });
@@ -346,19 +383,17 @@ describe('Round', () => {
                     round.doubledown();
                     round.stand();
 
-                    expect(player1.client.totalAmount).toBe(1100);
                     expect(round.allowedMoves).toEqual([]);
                     expect(round.isInProgress()).toBeFalsy();
+                    expect(player1.client.totalAmount).toBe(1100);
                 })
 
                 it("should lose double the amount of the bet when player loses.", () => {
                     round = new Round([player1, player2]);
                     round.gameCards = drawCustomCards([
-                        { rank: '10', suit: 'clubs' }, { rank: '5', suit: 'clubs' },
-                        { rank: '10', suit: 'clubs' }, { rank: '5', suit: 'clubs' },
-                        { rank: '10', suit: 'clubs' },
-                        { rank: '10', suit: 'clubs' },
-                        { rank: '10', suit: 'clubs' },
+                        { rank: '10', suit: 'clubs' }, { rank: '10', suit: 'clubs' }, { rank: '10', suit: 'clubs' },
+                        { rank: '5', suit: 'clubs' }, { rank: '5', suit: 'clubs' },
+                        { rank: '10', suit: 'clubs' }, { rank: '10', suit: 'clubs' },
                     ]);
 
                     round.bet({ amount: 50 });
@@ -375,7 +410,8 @@ describe('Round', () => {
                 it("should not be able to split when player has cards with differnent values.", () => {
                     round = new Round([player1, player2]);
                     round.gameCards = drawCustomCards([
-                        { rank: '10', suit: 'clubs' }, { rank: '5', suit: 'clubs' }
+                        { rank: '10', suit: 'clubs' }, { rank: '5', suit: 'clubs' }, { rank: '5', suit: 'clubs' },
+                        { rank: '5', suit: 'clubs' }, { rank: '5', suit: 'clubs' },
                     ]);
 
                     round.bet({ amount: 50 });
@@ -387,9 +423,8 @@ describe('Round', () => {
                 it("should be able to split when player has cards with same values. (not aces)", () => { // sometimes fails ??
                     round = new Round([player1, player2]);
                     round.gameCards = drawCustomCards([
-                        { rank: '10', suit: 'clubs' }, { rank: '10', suit: 'clubs' },
-                        { rank: '8', suit: 'clubs' }, { rank: '4', suit: 'clubs' },
-                        { rank: 'J', suit: 'clubs' },
+                        { rank: '10', suit: 'clubs' }, { rank: '8', suit: 'clubs' }, { rank: 'J', suit: 'clubs' },
+                        { rank: '10', suit: 'clubs' }, { rank: '4', suit: 'clubs' },
                         { rank: 'A', suit: 'clubs' },
                     ]);
 
@@ -399,10 +434,11 @@ describe('Round', () => {
                     expect(round.allowedMoves).toContain(ACTIONS.SPLIT);
                 })
 
-                it("should not be able to split when player has aces.", () => {
+                it("should not be able to split when the first player has aces.", () => {
                     round = new Round([player1, player2]);
                     round.gameCards = drawCustomCards([
-                        { rank: 'A', suit: 'clubs' }, { rank: 'A', suit: 'clubs' }
+                        { rank: 'A', suit: 'clubs' }, { rank: '5', suit: 'clubs' }, { rank: '3', suit: 'clubs' },
+                        { rank: 'A', suit: 'clubs' }, { rank: '7', suit: 'clubs' }
                     ]);
 
                     round.bet({ amount: 50 });
@@ -414,9 +450,8 @@ describe('Round', () => {
                 it("should contain one more player when user splits.", () => {
                     round = new Round([player1, player2]);
                     round.gameCards = drawCustomCards([
-                        { rank: '8', suit: 'clubs' }, { rank: '8', suit: 'clubs' },
-                        { rank: '10', suit: 'clubs' }, { rank: '5', suit: 'clubs' },
-                        { rank: 'J', suit: 'clubs' },
+                        { rank: '8', suit: 'clubs' }, { rank: '10', suit: 'clubs' }, { rank: 'J', suit: 'clubs' },
+                        { rank: '8', suit: 'clubs' }, { rank: '5', suit: 'clubs' },
                         { rank: '2', suit: 'clubs' },
                     ]);
 
@@ -430,11 +465,9 @@ describe('Round', () => {
                 it("should be able to split when player has cards with same values. (not aces)", () => { // sometimes fails ??
                     round = new Round([player1, player2]);
                     round.gameCards = drawCustomCards([
-                        { rank: '10', suit: 'clubs' }, { rank: '5', suit: 'clubs' },
-                        { rank: '8', suit: 'clubs' }, { rank: '8', suit: 'clubs' },
-                        { rank: 'J', suit: 'clubs' },
-                        { rank: '10', suit: 'clubs' },
-                        { rank: '2', suit: 'clubs' },
+                        { rank: '10', suit: 'clubs' }, { rank: '8', suit: 'clubs' }, { rank: 'J', suit: 'clubs' },
+                        { rank: '5', suit: 'clubs' }, { rank: '8', suit: 'clubs' },
+                        { rank: '10', suit: 'clubs' }, { rank: '2', suit: 'clubs' },
                     ]);
 
                     round.bet({ amount: 50 });

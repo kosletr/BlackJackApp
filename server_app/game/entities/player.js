@@ -5,7 +5,7 @@ const Participant = require("./participant");
 
 module.exports = class Player extends Participant {
     constructor(client) {
-        super(client.name);
+        super(client.name, client.gameId);
         this.currentBet = 0;
         this.outcome = null;
         this.client = client;
@@ -18,8 +18,8 @@ module.exports = class Player extends Participant {
         this.currentBet += amount;
     }
 
-    clone() {
-        return new Player(this.client);
+    clone(gameId = this.gameId) {
+        return new Player(this.client, gameId);
     }
 
     split() {

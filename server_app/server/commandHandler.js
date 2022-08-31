@@ -1,7 +1,7 @@
 const Game = require("../game/entities/game");
 const Client = require("./client");
 const { requiredParameters } = require("../game/constants");
-const { sendValidState } = require("../utils");
+const { sendOkResponse } = require("./utils");
 
 module.exports = class CommandHandler {
     constructor() {
@@ -13,7 +13,7 @@ module.exports = class CommandHandler {
         if (this.clientsMap.get(connection)) return "Client is registed.";
         const client = new Client(connection, command.params.name);
         this.clientsMap.set(connection, client);
-        sendValidState(connection, { id: client.id, state: { allowedMoves: ["startGame"] } });
+        sendOkResponse(connection, { id: client.id, state: { allowedMoves: ["startGame"] } });
     }
 
     handleDisconnection(connection) {
@@ -33,7 +33,7 @@ module.exports = class CommandHandler {
     handleExitGameCommand(connection) {
         const client = this.clientsMap.get(connection);
         const game = this.#findGameByClientAndExit(client);
-        sendValidState(connection, { id: client.id, state: { allowedMoves: game.allowedMoves } });
+        sendOkResponse(connection, { id: client.id, state: { allowedMoves: game.allowedMoves } });
     }
 
     handleGameCommand(connection, command) {

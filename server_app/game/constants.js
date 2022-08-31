@@ -7,6 +7,8 @@ const BEST_SCORE = 21;
 const NUMBER_OF_CARDS_PER_DECK = NUMBER_OF_SUITS * NUMBER_OF_RANKS; // The two Jokers are omitted.
 const NUMBER_OF_CARDS = NUMBER_OF_DECKS * NUMBER_OF_CARDS_PER_DECK;
 
+const DEALER_MIN_STAND_SCORE = 17;
+
 const points = {
     "A": [11, 1],
     "2": [2],
@@ -69,6 +71,7 @@ const paramConstraints = Object
 module.exports = {
     ACTIONS,
     BEST_SCORE,
+    DEALER_MIN_STAND_SCORE,
     NUMBER_OF_CARDS_PER_DECK,
     NUMBER_OF_CARDS,
     NUMBER_OF_RANKS,

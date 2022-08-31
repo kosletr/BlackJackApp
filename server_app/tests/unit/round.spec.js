@@ -52,7 +52,7 @@ describe('Round', () => {
             round.bet({ amount: 50 });
 
             expect(round.selectedPlayer.id).toBe(player1.id);
-            expect(round.isInProgress()).toBeTruthy();
+            expect(round.isCompleted()).toBeFalsy();
             expect(round.allowedMoves).toContain(ACTIONS.HIT);
             expect(round.allowedMoves).toContain(ACTIONS.STAND);
             expect(round.allowedMoves).toContain(ACTIONS.DOUBLE_DOWN);
@@ -67,7 +67,7 @@ describe('Round', () => {
             round.stand();
 
             expect(round.allowedMoves).toEqual([]);
-            expect(round.isInProgress()).toBeFalsy();
+            expect(round.isCompleted()).toBeTruthy();
         })
 
         it("should not be able to do anything when player loses (no blackjack).", () => {
@@ -82,10 +82,10 @@ describe('Round', () => {
 
             expect(round.players[0].outcome).toBe(OUTCOMES.DEFEAT);
             expect(round.allowedMoves).toEqual([]);
-            expect(round.isInProgress()).toBeFalsy();
+            expect(round.isCompleted()).toBeTruthy();
         })
 
-        it("should have a winner when dealer busts (dealer cannot have a blackjack).", () => {
+        it("should have a winner when dealer busts.", () => {
             round.gameCards = drawCustomCards([
                 { rank: '10', suit: 'clubs' }, { rank: 'J', suit: 'clubs' },
                 { rank: 'J', suit: 'clubs' }, { rank: '2', suit: 'clubs' }, { rank: 'K', suit: 'clubs' }
@@ -96,7 +96,7 @@ describe('Round', () => {
 
             expect(round.players[0].outcome).toBe(OUTCOMES.WIN);
             expect(round.allowedMoves).toEqual([]);
-            expect(round.isInProgress()).toBeFalsy();
+            expect(round.isCompleted()).toBeTruthy();
         })
 
         it("should have a tie when both the dealer and the player have a blackjack.", () => {
@@ -109,7 +109,7 @@ describe('Round', () => {
 
             expect(round.players[0].outcome).toBe(OUTCOMES.TIE);
             expect(round.allowedMoves).toEqual([]);
-            expect(round.isInProgress()).toBeFalsy();
+            expect(round.isCompleted()).toBeTruthy();
         })
 
         it("should be a win when the the player has a blackjack and the dealer gets 21.", () => {
@@ -122,7 +122,7 @@ describe('Round', () => {
 
             expect(round.players[0].outcome).toBe(OUTCOMES.WIN);
             expect(round.allowedMoves).toEqual([]);
-            expect(round.isInProgress()).toBeFalsy();
+            expect(round.isCompleted()).toBeTruthy();
         })
 
         it("should be a defeat when the the player has a 21 and the dealer gets a blackjack.", () => {
@@ -137,7 +137,7 @@ describe('Round', () => {
 
             expect(round.players[0].outcome).toBe(OUTCOMES.DEFEAT);
             expect(round.allowedMoves).toEqual([]);
-            expect(round.isInProgress()).toBeFalsy();
+            expect(round.isCompleted()).toBeTruthy();
         })
 
         it("should have a tie when dealer has the same score with the player (except blackjacks/21s).", () => {
@@ -151,7 +151,7 @@ describe('Round', () => {
 
             expect(round.players[0].outcome).toBe(OUTCOMES.TIE);
             expect(round.allowedMoves).toEqual([]);
-            expect(round.isInProgress()).toBeFalsy();
+            expect(round.isCompleted()).toBeTruthy();
         })
     })
 
@@ -191,7 +191,7 @@ describe('Round', () => {
                 round.bet({ amount: 50 });
 
                 expect(round.selectedPlayer.id).toBe(player2.id);
-                expect(round.isInProgress()).toBeTruthy();
+                expect(round.isCompleted()).toBeFalsy();
                 expect(round.allowedMoves).toContain(ACTIONS.HIT);
                 expect(round.allowedMoves).toContain(ACTIONS.STAND);
                 expect(round.allowedMoves).toContain(ACTIONS.DOUBLE_DOWN);
@@ -210,7 +210,7 @@ describe('Round', () => {
 
                 expect(player2.outcome).toBe(OUTCOMES.WIN);
                 expect(round.allowedMoves).toEqual([]);
-                expect(round.isInProgress()).toBeFalsy();
+                expect(round.isCompleted()).toBeTruthy();
             })
 
             it("should not be able to do anything when both players have a blackjack and dealer does not.", () => {
@@ -226,7 +226,7 @@ describe('Round', () => {
                 expect(player1.outcome).toBe(OUTCOMES.WIN);
                 expect(player2.outcome).toBe(OUTCOMES.WIN);
                 expect(round.allowedMoves).toEqual([]);
-                expect(round.isInProgress()).toBeFalsy();
+                expect(round.isCompleted()).toBeTruthy();
             })
 
             it("should not be able to do anything when both players and dealers have a blackjack.", () => {
@@ -242,7 +242,7 @@ describe('Round', () => {
                 expect(player1.outcome).toBe(OUTCOMES.TIE);
                 expect(player2.outcome).toBe(OUTCOMES.TIE);
                 expect(round.allowedMoves).toEqual([]);
-                expect(round.isInProgress()).toBeFalsy();
+                expect(round.isCompleted()).toBeTruthy();
             })
         })
 
@@ -257,7 +257,7 @@ describe('Round', () => {
                 round.bet({ amount: 50 });
 
                 expect(round.selectedPlayer.id).toBe(player1.id);
-                expect(round.isInProgress()).toBeTruthy();
+                expect(round.isCompleted()).toBeFalsy();
                 expect(round.allowedMoves).toContain(ACTIONS.HIT);
                 expect(round.allowedMoves).toContain(ACTIONS.STAND);
                 expect(round.allowedMoves).toContain(ACTIONS.DOUBLE_DOWN);
@@ -277,7 +277,7 @@ describe('Round', () => {
                 expect(round.selectedPlayer.id).toBe(player2.id);
                 expect(round.players[0].outcome).toBe(OUTCOMES.DEFEAT);
                 expect(round.players[1].outcome).toBeFalsy();
-                expect(round.isInProgress()).toBeTruthy();
+                expect(round.isCompleted()).toBeFalsy();
                 expect(round.allowedMoves).toContain(ACTIONS.HIT);
                 expect(round.allowedMoves).toContain(ACTIONS.STAND);
                 expect(round.allowedMoves).toContain(ACTIONS.DOUBLE_DOWN);
@@ -329,7 +329,7 @@ describe('Round', () => {
                 round.stand(); // Cannot stand if player 2 has a blackjack
 
                 expect(round.allowedMoves).toEqual([]);
-                expect(round.isInProgress()).toBeFalsy();
+                expect(round.isCompleted()).toBeTruthy();
             })
 
             it("should not be able to do anything when the second player busts.", () => {
@@ -347,7 +347,7 @@ describe('Round', () => {
 
                 expect(round.players[1].outcome).toBe(OUTCOMES.DEFEAT);
                 expect(round.allowedMoves).toEqual([]);
-                expect(round.isInProgress()).toBeFalsy();
+                expect(round.isCompleted()).toBeTruthy();
             })
 
             it("should have two winners when dealer looses (cannot have a blackjack).", () => {
@@ -366,7 +366,7 @@ describe('Round', () => {
                 expect(round.players[0].outcome).toBe(OUTCOMES.WIN);
                 expect(round.players[1].outcome).toBe(OUTCOMES.WIN);
                 expect(round.allowedMoves).toEqual([]);
-                expect(round.isInProgress()).toBeFalsy();
+                expect(round.isCompleted()).toBeTruthy();
             })
 
             describe('double-down', () => {
@@ -384,7 +384,7 @@ describe('Round', () => {
                     round.stand();
 
                     expect(round.allowedMoves).toEqual([]);
-                    expect(round.isInProgress()).toBeFalsy();
+                    expect(round.isCompleted()).toBeTruthy();
                     expect(player1.client.totalAmount).toBe(1100);
                 })
 

@@ -1,4 +1,5 @@
-const { generateUniqueId, sendValidState } = require("../utils");
+const { generateUniqueId } = require("../utils");
+const { sendOkResponse } = require("./utils");
 const { INITIAL_AMOUNT } = require("../game/configurations");
 
 module.exports = class Client {
@@ -11,6 +12,6 @@ module.exports = class Client {
     }
 
     inform(state) {
-        sendValidState(this.connection, { id: this.id, state });
+        sendOkResponse(this.connection, { id: this.id, state });
     }
 };

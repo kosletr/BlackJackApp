@@ -24,7 +24,7 @@ module.exports = class Game {
 
     startRound() {
         if (this.clients.length === 0) throw new GameError("Cannot start a game without players");
-        this.currentRound = new Round(this.previousPlayers || this.#getPlayersFromClients());
+        this.currentRound = new Round(this.previousPlayers || this.#getPlayersFromClients(), this.id);
         this.rounds.push(this.currentRound);
         this.allowedMoves = ["exitGame"];
         this.#updateCommandsForNewRound();
@@ -42,12 +42,8 @@ module.exports = class Game {
     executeCommand(clientId, command) {
         const commandHandler = this.commands[command.name];
         commandHandler({ clientId, ...command.params });
-        if (this.isRoundCompleted()) this.finishCurrentRound();
+        if (this.currentRound.isCompleted()) this.finishCurrentRound();
         this.informAllClients();
-    }
-
-    isRoundCompleted() {
-        return !this.currentRound.isInProgress();
     }
 
     finishCurrentRound() {
@@ -112,7 +108,7 @@ module.exports = class Game {
     removeClient(client) {
         client.gameId = null;
         this.clients = this.clients.filter(c => c.id !== client.id);
-        if (this.currentRound.isInProgress()) this.currentRound.removeClientById(client.id);
+        if (!this.currentRound.isCompleted()) this.currentRound.removeClientById(client.id);
         this.informAllClients();
     }
 }

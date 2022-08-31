@@ -3,9 +3,10 @@ const { BEST_SCORE } = require("../constants");
 const GameError = require("./gameError");
 
 module.exports = class Participant {
-    constructor(name) {
+    constructor(name, gameId) {
         this.id = generateUniqueId();
         this.name = name;
+        this.gameId = gameId;
         this.cards = [];
         this.possibleScores = new Set([0]);
         this.score = 0;

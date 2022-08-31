@@ -1,30 +1,33 @@
 const GameCards = require("./gameCards");
 const Dealer = require("./dealer");
-const { generateUniqueId } = require("../../utils");
+const { generateUniqueId, getPlayerState } = require("../../utils");
 const GameError = require("./gameError");
 const { ACTIONS } = require("../constants");
+const logger = require("../../config/logger");
 
 module.exports = class Round {
-    constructor(players) {
+    constructor(players, gameId) {
         if (players.length === 0) throw new GameError("At least one player must join to start a new round.");
         this._players = players;
+        this.gameId = gameId;
         this.id = generateUniqueId();
         this.playerIndex = 0;
         this.#updateSelectedPlayer();
-        this.dealer = new Dealer();
+        this.dealer = new Dealer(this.gameId);
         this.gameCards = new GameCards();
         this._allowedMoves = [ACTIONS.BET];
     }
 
     #updateSelectedPlayer() {
         this._selectedPlayer = this._players[this.playerIndex];
+        logger.info("Selected Player: ", getPlayerState(this));
     }
 
     bet({ amount }) {
         this._selectedPlayer.bet(amount);
-        if (!this.#hasEveryPlayerBet()) return this.#waitForTheNextPlayerToBet();
+        if (!this.#hasEveryPlayerBet()) return this.#askNextPlayerToBet();
         this.#dealCards();
-        this.#resetTurnAfterDealer();
+        this.#resetTurnAfterDealingTheCards();
         if (this.#canDoubleDown(amount)) this._allowedMoves.push(ACTIONS.DOUBLE_DOWN);
         if (this.#canSplit()) this._allowedMoves.push(ACTIONS.SPLIT);
     }
@@ -33,7 +36,7 @@ module.exports = class Round {
         return this.players.every(p => p.currentBet);
     }
 
-    #waitForTheNextPlayerToBet() {
+    #askNextPlayerToBet() {
         this._allowedMoves = [ACTIONS.BET];
         this.#setNextParticipant();
     }
@@ -46,21 +49,21 @@ module.exports = class Round {
 
     #dealCards() {
         for (const player of this._players) this.#drawFromTheCards(player);
-        this.dealer.takeACard(this.gameCards.draw());
+        this.#drawFromTheCards(this.dealer);
         for (const player of this._players) this.#drawFromTheCards(player);
     }
 
-    #drawFromTheCards(player) {
-        player.takeACard(this.gameCards.draw());
+    #drawFromTheCards(participant) {
+        participant.takeACard(this.gameCards.draw());
     }
 
-    #resetTurnAfterDealer() {
+    #resetTurnAfterDealingTheCards() {
         this.playerIndex = -1;
         this.#finishParticipantHand();
     }
 
     #finishParticipantHand() {
-        if (!this.isInProgress()) return this.#finishRound();
+        if (this.isCompleted()) return this.#finishRound();
         this.#setNextParticipant();
         if (this.#isDealersTurn()) return this.dealer.play(this);
         if (this.selectedPlayer.hasBlackJack()) return this.#finishParticipantHand();
@@ -69,8 +72,8 @@ module.exports = class Round {
         if (this.#canSplit()) this._allowedMoves.push(ACTIONS.SPLIT);
     }
 
-    isInProgress() {
-        return this.playerIndex <= this._players.length;
+    isCompleted() {
+        return this.playerIndex > this._players.length;
     }
 
     #finishRound() {

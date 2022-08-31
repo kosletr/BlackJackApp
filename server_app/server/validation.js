@@ -1,24 +1,18 @@
-const winston = require("winston");
+const GameError = require("../game/entities/gameError");
 const { commands, paramConstraints } = require('../game/constants');
 
-module.exports = function validateRequest(data) {
-    try {
-        const { name, params } = JSON.parse(data);
-        const request = { name, params };
-        winston.info("Request: " + JSON.stringify(request));
-        const error = validateCommandName(name) || validateCommandParams(name, params);
-        if (error) return { error, request };
-        return { request };
-    } catch (err) {
-        console.error(err);
-        return { error: "Cannot parse the request.", request: data };
-    }
+// Can also be replaced by Joi.
+module.exports = function validateRequest(request) {
+    const { name, params } = request;
+    const errors = [];
+    errors.push(validateCommandName(name));
+    errors.push(validateCommandParams(name, params));
+    if (errors.some(e => e)) throw new GameError(errors.join(" "));
 }
 
 function validateCommandName(commandName) {
     if (!commandName) return "Missing Parameters: name";
-    if (!commands.includes(commandName))
-        return `Invalid command: ${commandName}`;
+    if (!commands.includes(commandName)) return `Invalid command: ${commandName}`;
 }
 
 function validateCommandParams(commandName, commandParams) {

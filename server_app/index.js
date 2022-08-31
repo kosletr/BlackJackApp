@@ -1,28 +1,15 @@
 const config = require('config');
 const WebSocket = require('ws');
-const winston = require('winston');
-const ConnectionHandler = require("./server/connectionHandler");
-const GameError = require('./game/entities/gameError');
-const validateRequest = require('./server/validation');
+const logger = require('./config/logger');
+const ConnectionsHandler = require("./server/connectionsHandler");
 
 const port = process.env.PORT || config.get("port");
-const wss = new WebSocket.Server({ port }, winston.info(`Listening on port ${port}.`));
-const connHandlers = new ConnectionHandler();
+const wss = new WebSocket.Server({ port }, () => logger.info(`Listening on port ${port}.`));
+
+const connHandlers = new ConnectionsHandler();
 
 wss.on('connection', (ws) => {
     connHandlers.handleClientConnection(ws);
-    ws.on('message', data => {
-        try {
-            const { error, request } = validateRequest(data);
-            if (error)
-                return connHandlers.sendBadRequest(ws, request, error);
-            return connHandlers.handleRequest(ws, request);
-        } catch (err) {
-            console.error(err);
-            if (err instanceof GameError)
-                return connHandlers.sendBadRequest(ws, null, err.message);
-            return connHandlers.sendInternalServerError(ws);
-        }
-    });
+    ws.on('message', (message) => connHandlers.handleClientMessage(ws, message));
     ws.on("close", () => connHandlers.handleClientDisconnection(ws));
 });

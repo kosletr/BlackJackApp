@@ -1,4 +1,5 @@
 import React from 'react'
+import RegistrationForm from './RegistrationForm';
 
 export default function GameControl({ handlers, actions }) {
 
@@ -8,37 +9,36 @@ export default function GameControl({ handlers, actions }) {
 
     return (
         <div className='gamecontrol'>
-            <div className='gamecontrol'>
-                {canStartGame &&
-                    <button
+            <RegistrationForm handlers={handlers} actions={actions} />
+            {canStartGame &&
+                <button
+                    className='btn btn--primary'
+                    name="startGame"
+                    onClick={() => handlers.handleStartGame()}
+                    disabled={!canStartGame}>
+                    Start Game
+                </button>
+            }
+            {canStartRound &&
+                <button
+                    name="startRound"
+                    className='btn btn--primary'
+                    onClick={() => handlers.handleStartRound()}
+                    disabled={!canStartRound}>
+                    Next Round
+                </button>
+            }
+            <div>
+                {canExitGame &&
+                    < button
+                        name="exitGame"
                         className='btn btn--primary'
-                        name="startGame"
-                        onClick={() => handlers.handleStartGame()}
-                        disabled={!canStartGame}>
-                        Start Game
+                        onClick={() => handlers.handleExitGame()}
+                        disabled={!canExitGame}>
+                        Exit Game
                     </button>
                 }
-                {canStartRound &&
-                    <button
-                        name="startRound"
-                        className='btn btn--primary'
-                        onClick={() => handlers.handleStartRound()}
-                        disabled={!canStartRound}>
-                        Next Round
-                    </button>
-                }
-                <div>
-                    {canExitGame &&
-                        < button
-                            name="exitGame"
-                            className='btn btn--primary'
-                            onClick={() => handlers.handleExitGame()}
-                            disabled={!canExitGame}>
-                            Exit Game
-                        </button>
-                    }
-                </div>
-            </div >
-        </div>
+            </div>
+        </div >
     )
 }

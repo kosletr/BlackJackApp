@@ -7,7 +7,6 @@ import DealerBoard from './components/DealerBoard';
 import RoundControl from './components/RoundControl';
 import PlayersBoard from './components/PlayersBoard';
 import GameHandlers from './gameHandlers';
-import RegistrationForm from './components/RegistrationForm';
 
 const blackjack_api = process.env.REACT_APP_BLACKJACK_API || "ws://localhost:3001";
 
@@ -39,7 +38,6 @@ function App() {
   return (< >
     <ToastContainer theme="colored" />
     <div className='game'>
-      <RegistrationForm handlers={gameHandlers} actions={data?.state?.allowedMoves} />
       <GameControl handlers={gameHandlers} actions={data?.state?.allowedMoves} />
       <DealerBoard playerId={data?.clientId} dealer={data?.state?.dealer} turn={data?.state?.selectedPlayerId} />
       <PlayersBoard playerId={data?.clientId} players={data?.state?.players} turn={data?.state?.selectedPlayerId} />

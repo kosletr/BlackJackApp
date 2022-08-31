@@ -1,11 +1,18 @@
-
 module.exports = function getGameState(game, clientId) {
     return {
-        allowedMoves: game.getAllowedMoves(clientId),
+        allowedMoves: getAllowedMoves(game, clientId),
         dealer: getDealerState(game.currentRound?.dealer),
         players: getPlayersState(game.currentRound?.players),
         selectedPlayerId: game.currentRound?.selectedPlayer?.id,
     }
+}
+
+
+function getAllowedMoves(game, clientId) {
+    const roundMoves = game.currentRound?.allowedMoves;
+    const gameMoves = [...game.allowedMoves];
+    if (roundMoves && clientId === game.getCurrentClientId()) gameMoves.push(...roundMoves);
+    return gameMoves;
 }
 
 function getDealerState(dealer) {

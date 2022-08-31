@@ -11,9 +11,9 @@ Player can:
  - Double-down
 
 Notes:
- - Black-Jack wins pay 3 : 2
- - Black-Jack
- - Surrender is not possible
+ - Black-Jack pays 3 : 2
+ - Black-Jack beats 21
+ - Surrender is not allowed
  - Spliting aces is not allowed
  - The maximum bet is limited by the amount of money the player has
 
@@ -21,7 +21,6 @@ Notes:
  -  Number of decks: 6
  -  Minimum allowed bet: 10
  -  Initial amount of every player: 1000
- -  Dealer minimum stand score: 17
 
 ## Setup Instructions (development)
 

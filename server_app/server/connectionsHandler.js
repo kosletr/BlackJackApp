@@ -1,24 +1,24 @@
 const logger = require('../config/logger');
 const configurations = require("../game/configurations");
-const CommandHandler = require('./commandHandler');
+const GameHandler = require('./gameHandler');
 const GameError = require('../game/entities/gameError');
-const RequestModel = require('./requestModel');
-const { sendBadResponse, sendInternalServerErrorResponse, sendOkResponse } = require("./utils");
+const { sendBadResponse, sendInternalServerErrorResponse, sendOkResponse, createRequestModel } = require("./utils");
+
+const commands = {
+    registerClient: "handleRegisterCommand",
+    startGame: "handleStartGameCommand",
+    exitGame: "handleExitGameCommand",
+    startRound: "handleGameCommand",
+    bet: "handleGameCommand",
+    hit: "handleGameCommand",
+    stand: "handleGameCommand",
+    split: "handleGameCommand",
+    doubledown: "handleGameCommand",
+}
 
 module.exports = class ConnectionHandler {
     constructor() {
-        this.commandHandler = new CommandHandler();
-        this.commands = {
-            registerClient: this.commandHandler.handleRegisterCommand,
-            startGame: this.commandHandler.handleStartGameCommand,
-            exitGame: this.commandHandler.handleExitGameCommand,
-            startRound: this.commandHandler.handleGameCommand,
-            bet: this.commandHandler.handleGameCommand,
-            hit: this.commandHandler.handleGameCommand,
-            stand: this.commandHandler.handleGameCommand,
-            split: this.commandHandler.handleGameCommand,
-            doubledown: this.commandHandler.handleGameCommand,
-        }
+        this.commandHandler = new GameHandler();
     }
 
     handleClientConnection(connection) {
@@ -30,13 +30,14 @@ module.exports = class ConnectionHandler {
     handleClientMessage(ws, message) {
         let request;
         try {
-            request = new RequestModel(message).get();
-            const commandHandler = this.commands[request.name].bind(this.commandHandler);
+            request = createRequestModel(message);
+            const command = commands[request.name];
+            const commandHandler = this.commandHandler[command].bind(this.commandHandler);
             commandHandler.call(this, ws, request);
         } catch (error) {
             if (error instanceof GameError) {
                 logger.warn(error.message);
-                return sendBadResponse(ws, request, error.message);
+                return sendBadResponse(ws, error.message, request);
             }
             logger.error(error);
             sendInternalServerErrorResponse(ws);

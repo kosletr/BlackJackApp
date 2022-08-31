@@ -7,7 +7,7 @@ module.exports = function validateRequest(request) {
     const errors = [];
     errors.push(validateCommandName(name));
     errors.push(validateCommandParams(name, params));
-    if (errors.some(e => e)) throw new GameError(errors.join(" "));
+    if (errors.some(Boolean)) throw new GameError(errors.join(" "));
 }
 
 function validateCommandName(commandName) {
@@ -19,6 +19,5 @@ function validateCommandParams(commandName, commandParams) {
     if (!commandParams) return "Missing Parameters: params";
     const missingParams = new Set(paramConstraints[commandName]);
     Object.keys(commandParams).forEach(p => (commandParams[p] || commandParams[p] === 0) && missingParams.delete(p));
-    if (missingParams.size > 0)
-        return `Missing Parameters from params: ${JSON.stringify([...missingParams])}`;
+    if (missingParams.size > 0) return `Missing Parameters from params: ${JSON.stringify([...missingParams])}`;
 }

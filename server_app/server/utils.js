@@ -1,5 +1,16 @@
 const configurations = require("../game/configurations");
+const logger = require('../config/logger');
+const validateRequest = require('./validation');
 
+/* Messages */
+function createRequestModel(message) {
+    request = JSON.parse(message);
+    logger.info(`Request: ${JSON.stringify(request)}`);
+    validateRequest(request);
+    return request;
+}
+
+/* Connections */
 function sendOkResponse(connection, data, request) {
     const { id, state, ...others } = data;
     const response = { clientId: id, configurations, state, ...others, request };
@@ -18,4 +29,4 @@ function sendToClient(connection, data) {
     connection.send(JSON.stringify(data));
 }
 
-module.exports = { sendOkResponse, sendBadResponse, sendInternalServerErrorResponse };
+module.exports = { sendOkResponse, sendBadResponse, sendInternalServerErrorResponse, createRequestModel };

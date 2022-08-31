@@ -462,7 +462,7 @@ describe('Round', () => {
                     expect(round.allowedMoves).not.toContain(ACTIONS.SPLIT);
                 })
 
-                it("should be able to split when player has cards with same values. (not aces)", () => { // sometimes fails ??
+                it("should be able to split when player has cards with same values. (not aces)", () => {
                     round = new Round([player1, player2]);
                     round.gameCards = drawCustomCards([
                         { rank: '10', suit: 'clubs' }, { rank: '8', suit: 'clubs' }, { rank: 'J', suit: 'clubs' },
@@ -477,6 +477,174 @@ describe('Round', () => {
 
                     expect(round.allowedMoves).not.toContain(ACTIONS.SPLIT);
                 })
+            })
+
+            describe('removePlayerByClientId', () => {
+                it("should be player2 turn when player1 exits the game before beting.", () => {
+                    round = new Round([player1, player2]);
+                    round.removePlayerByClientId(player1.client.id);
+
+                    expect(round.allowedMoves).toEqual(["bet"]);
+                    expect(round.selectedPlayer).toBe(player2);
+                })
+
+                it("should be player2 turn when player1 exits the game before beting.", () => {
+                    round = new Round([player1, player2]);
+                    round.removePlayerByClientId(player2.client.id);
+
+                    expect(round.allowedMoves).toEqual(["bet"]);
+                    expect(round.selectedPlayer).toBe(player1);
+                })
+
+                it("should be player1 (no blackjack) turn when player2 exits the game before beting.", () => {
+                    round = new Round([player1, player2]);
+                    round.gameCards = drawCustomCards([
+                        { rank: '10', suit: 'clubs' }, { rank: '8', suit: 'clubs' }, { rank: 'J', suit: 'clubs' },
+                        { rank: '5', suit: 'clubs' }, { rank: '8', suit: 'clubs' },
+                    ]);
+                    round.bet({ amount: 50 });
+                    round.removePlayerByClientId(player2.client.id);
+
+                    expect(round.allowedMoves).toContain(ACTIONS.HIT);
+                    expect(round.allowedMoves).toContain(ACTIONS.STAND);
+                    expect(round.allowedMoves).toContain(ACTIONS.DOUBLE_DOWN);
+                    expect(round.selectedPlayer).toBe(player1);
+                })
+
+                it("should be player2 turn when player1 exits the game after beting.", () => {
+                    round = new Round([player1, player2]);
+                    round.bet({ amount: 50 });
+                    round.removePlayerByClientId(player1.client.id);
+
+                    expect(round.allowedMoves).toEqual(["bet"]);
+                    expect(round.selectedPlayer).toBe(player2);
+                })
+
+                it("should be player2 turn when player1 exits the game after both bet.", () => {
+                    round = new Round([player1, player2]);
+                    round.gameCards = drawCustomCards([
+                        { rank: '10', suit: 'clubs' }, { rank: '8', suit: 'clubs' }, { rank: 'J', suit: 'clubs' },
+                        { rank: '5', suit: 'clubs' }, { rank: '8', suit: 'clubs' },
+                    ]);
+
+                    round.bet({ amount: 50 });
+                    round.bet({ amount: 50 });
+                    round.removePlayerByClientId(player1.client.id);
+
+                    expect(round.allowedMoves).toContain(ACTIONS.HIT);
+                    expect(round.allowedMoves).toContain(ACTIONS.STAND);
+                    expect(round.selectedPlayer).toBe(player2);
+                })
+
+                it("should be player1 turn when player2 exits the game after beting.", () => {
+                    round = new Round([player1, player2]);
+                    round.gameCards = drawCustomCards([
+                        { rank: '10', suit: 'clubs' }, { rank: '8', suit: 'clubs' }, { rank: 'J', suit: 'clubs' },
+                        { rank: '5', suit: 'clubs' }, { rank: '8', suit: 'clubs' },
+                    ]);
+
+                    round.bet({ amount: 50 });
+                    round.bet({ amount: 50 });
+                    round.removePlayerByClientId(player2.client.id);
+
+                    expect(round.allowedMoves).toContain(ACTIONS.HIT);
+                    expect(round.allowedMoves).toContain(ACTIONS.STAND);
+                    expect(round.selectedPlayer).toBe(player1);
+                })
+
+                it("should be a win for player1 when player1 has a blackjack and player2 exits the game after beting is done.", () => {
+                    round = new Round([player1, player2]);
+                    round.gameCards = drawCustomCards([
+                        { rank: '10', suit: 'clubs' }, { rank: '8', suit: 'clubs' }, { rank: '2', suit: 'clubs' },
+                        { rank: 'A', suit: 'clubs' }, { rank: '8', suit: 'clubs' },
+                    ]);
+
+                    round.bet({ amount: 50 });
+                    round.bet({ amount: 50 });
+                    round.removePlayerByClientId(player2.client.id);
+
+                    expect(round.allowedMoves).toEqual([]);
+                    expect(round.selectedPlayer).toBe(null);
+                })
+
+
+                it("should ... after hit.", () => {
+                    round = new Round([player1, player2]);
+                    round.gameCards = drawCustomCards([
+                        { rank: '4', suit: 'clubs' }, { rank: '8', suit: 'clubs' }, { rank: '2', suit: 'clubs' },
+                        { rank: '5', suit: 'clubs' }, { rank: '8', suit: 'clubs' },
+                    ]);
+
+                    round.bet({ amount: 50 });
+                    round.bet({ amount: 50 });
+                    round.hit();
+                    round.removePlayerByClientId(player1.client.id);
+
+                    expect(round.allowedMoves).toContain(ACTIONS.HIT);
+                    expect(round.allowedMoves).toContain(ACTIONS.STAND);
+                    expect(round.selectedPlayer).toBe(player2);
+                })
+
+                it("should ... after split.", () => {
+                    round = new Round([player1, player2]);
+                    round.gameCards = drawCustomCards([
+                        { rank: '10', suit: 'clubs' }, { rank: '8', suit: 'clubs' }, { rank: '2', suit: 'clubs' },
+                        { rank: '10', suit: 'clubs' }, { rank: '8', suit: 'clubs' },
+                    ]);
+
+                    round.bet({ amount: 50 });
+                    round.bet({ amount: 50 });
+                    round.split();
+                    round.removePlayerByClientId(player1.client.id);
+
+                    expect(round.allowedMoves).toContain(ACTIONS.HIT);
+                    expect(round.allowedMoves).toContain(ACTIONS.STAND);
+                    expect(round.allowedMoves).toContain(ACTIONS.SPLIT);
+                    expect(round.selectedPlayer).toBe(player2);
+                })
+
+                it("should ... after split.", () => {
+                    round = new Round([player1, player2]);
+                    round.gameCards = drawCustomCards([
+                        { rank: '10', suit: 'clubs' }, { rank: '8', suit: 'clubs' }, { rank: '2', suit: 'clubs' },
+                        { rank: '10', suit: 'clubs' }, { rank: '8', suit: 'clubs' },
+                    ]);
+
+                    round.bet({ amount: 50 });
+                    round.bet({ amount: 50 });
+                    round.split();
+                    round.removePlayerByClientId(player2.client.id);
+
+                    expect(round.allowedMoves).toContain(ACTIONS.HIT);
+                    expect(round.allowedMoves).toContain(ACTIONS.STAND);
+                    expect(round.selectedPlayer.client.id).toBe(player1.client.id);
+                })
+
+                it("should ... after complex split.", () => {
+                    round = new Round([player1, player2]);
+                    round.gameCards = drawCustomCards([
+                        { rank: '10', suit: 'clubs' }, { rank: '8', suit: 'clubs' }, { rank: '2', suit: 'clubs' },
+                        { rank: '10', suit: 'clubs' }, { rank: '8', suit: 'clubs' },
+                        { rank: 'A', suit: 'clubs' },
+                        { rank: '7', suit: 'clubs' },
+                    ]);
+
+                    round.bet({ amount: 50 });
+                    round.bet({ amount: 50 });
+                    round.split();
+                    round.hit();
+                    round.hit();
+                    round.stand();
+                    round.split();
+                    round.removePlayerByClientId(player1.client.id);
+
+                    expect(round.allowedMoves).toContain(ACTIONS.HIT);
+                    expect(round.allowedMoves).toContain(ACTIONS.STAND);
+                    expect(round.selectedPlayer.client.id).toBe(player2.client.id);
+                })
+
+
+
             })
         })
     })

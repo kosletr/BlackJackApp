@@ -16,6 +16,7 @@ module.exports = class Round {
         this.dealer = new Dealer(this.gameId);
         this.gameCards = new GameCards();
         this._allowedMoves = [ACTIONS.BET];
+        this.dealtCards = false;
     }
 
     #updateSelectedPlayer() {
@@ -26,10 +27,15 @@ module.exports = class Round {
     bet({ amount }) {
         this._selectedPlayer.bet(amount);
         if (!this.#hasEveryPlayerBet()) return this.#askNextPlayerToBet();
+        this.#finishBeting(amount);
+    }
+
+    #finishBeting(amount) {
         this.#dealCards();
         this.#resetTurnAfterDealingTheCards();
         if (this.#canDoubleDown(amount)) this._allowedMoves.push(ACTIONS.DOUBLE_DOWN);
         if (this.#canSplit()) this._allowedMoves.push(ACTIONS.SPLIT);
+        this.dealtCards = true;
     }
 
     #hasEveryPlayerBet() {
@@ -80,6 +86,7 @@ module.exports = class Round {
         this._selectedPlayer = null;
         this._allowedMoves = [];
         this._players.forEach(p => p.transferMoney(this.dealer));
+        logger.info("Round is completed.");
     }
 
     #isDealersTurn() {
@@ -129,9 +136,16 @@ module.exports = class Round {
         this._allowedMoves = [ACTIONS.HIT, ACTIONS.STAND];
     }
 
-    removeClientById(clientId) {
+    removePlayerByClientId(clientId) {
+        logger.info(`Removing player with clientId: ${clientId} from round: ${this.id}`);
         this._players = this._players.filter(p => p.client.id !== clientId);
-        if (this._selectedPlayer.client.id === clientId) this.#updateSelectedPlayer();
+        if (this._players.length === 0) this.#finishParticipantHand();
+        else if (this._selectedPlayer?.client?.id === clientId) {
+            this.playerIndex--;
+            if (!this.#hasEveryPlayerBet()) this.#askNextPlayerToBet();
+            else if (!this.dealtCards) this.#finishBeting(this.selectedPlayer.currentBet);
+            else this.#finishParticipantHand();
+        }
     }
 
     get selectedPlayer() {

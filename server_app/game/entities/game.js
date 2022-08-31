@@ -3,7 +3,8 @@ const Player = require("./player");
 const getGameState = require("./gameState");
 const { generateUniqueId } = require("../../utils");
 const GameError = require("./gameError");
-const { ACTIONS } = require("../constants");
+const { ACTIONS, requiredParameters } = require("../constants");
+const logger = require("../../config/logger");
 
 module.exports = class Game {
     constructor() {
@@ -22,13 +23,22 @@ module.exports = class Game {
         return this.clients.map(c => new Player(c));
     }
 
+    startGame() {
+        if (this.clients.length === 0) throw new GameError("Cannot start a game without players");
+        this.currentRound = new Round(this.#getPlayersFromClients(), this.id);
+        this.rounds.push(this.currentRound);
+        this.allowedMoves = ["exitGame"];
+        this.#updateCommandsForNewRound();
+        this.informAllClientsOfTheGame();
+    }
+
     startRound() {
         if (this.clients.length === 0) throw new GameError("Cannot start a game without players");
         this.currentRound = new Round(this.previousPlayers || this.#getPlayersFromClients(), this.id);
         this.rounds.push(this.currentRound);
         this.allowedMoves = ["exitGame"];
         this.#updateCommandsForNewRound();
-        this.informAllClients();
+        this.informAllClientsOfTheGame();
     }
 
     #updateCommandsForNewRound() {
@@ -40,10 +50,23 @@ module.exports = class Game {
     }
 
     executeCommand(clientId, command) {
+        this.#checkIfCommandIsCurrentlyAllowed(command, clientId);
         const commandHandler = this.commands[command.name];
         commandHandler({ clientId, ...command.params });
         if (this.currentRound.isCompleted()) this.finishCurrentRound();
-        this.informAllClients();
+        this.informAllClientsOfTheGame();
+    }
+
+    #checkIfCommandIsCurrentlyAllowed(command, clientId) {
+        if (Object.keys(requiredParameters.gameCommands).includes(command.name)) {
+            if (!this.allowedMoves.includes(command.name))
+                throw new GameError(`Command '${command.name}' is not allowed now.`);
+        } else {
+            if (this.getCurrentClientId() !== clientId)
+                throw new GameError("It is not your turn.");
+            if (!this.currentRound.allowedMoves.includes(command.name))
+                throw new GameError(`Command '${command.name}' is not allowed now.`);
+        }
     }
 
     finishCurrentRound() {
@@ -60,38 +83,19 @@ module.exports = class Game {
         return this.currentRound.players.filter(p => p.id);
     }
 
-    informAllClients() {
-        for (const client of this.clients) {
-            const gameState = getGameState(this, client.id);
-            client.inform(gameState);
-        }
-    }
-
     hasStarted() {
-        return this.currentRound?.isInProgress();
+        return this.currentRound && !this.currentRound.isCompleted();
     }
 
     exitGame({ clientId }) {
         const client = this.clients.find(c => c.id === clientId);
         if (!client) throw new GameError("Client not found.");
-        this.allowedMoves = ["startGame"];
         this.removeClient(client);
+        if (this.isCompleted()) this.allowedMoves = ["startGame"];
     }
 
-    validateRoundMoves(clientId, commandName) {
-        if (this.getCurrentClientId() !== clientId) return "It is not your turn.";
-        if (!this.currentRound.allowedMoves.includes(commandName)) return `Command '${commandName}' is not allowed now.`;
-    }
-
-    validateGameMoves(commandName) {
-        if (!this.allowedMoves.includes(commandName)) return `Command '${commandName}' is not allowed now.`;
-    }
-
-    getAllowedMoves(clientId) {
-        const roundMoves = this.currentRound?.allowedMoves;
-        const gameMoves = [...this.allowedMoves];
-        if (roundMoves && clientId === this.getCurrentClientId()) gameMoves.push(...roundMoves);
-        return gameMoves;
+    isCompleted() {
+        return this.clients.length === 0;
     }
 
     getCurrentClientId() {
@@ -99,16 +103,23 @@ module.exports = class Game {
     }
 
     addClient(client) {
-        this.allowedMoves = ["startGame"];
         client.gameId = this.id;
+        const foundClient = this.clients.find(c => c.id === client.id);
+        if (foundClient) throw new Error("Client already in");
         this.clients.push(client);
-        this.informAllClients();
+        if (!this.allowedMoves.includes("startGame")) this.allowedMoves.push("startGame");
+        this.informAllClientsOfTheGame();
     }
 
     removeClient(client) {
+        logger.info(`Removing player with clientId: ${client.id} from game: ${this.id}`);
         client.gameId = null;
+        this.currentRound.removePlayerByClientId(client.id);
         this.clients = this.clients.filter(c => c.id !== client.id);
-        if (!this.currentRound.isCompleted()) this.currentRound.removeClientById(client.id);
-        this.informAllClients();
+        this.informAllClientsOfTheGame();
+    }
+
+    informAllClientsOfTheGame() {
+        this.clients.forEach(c => c.inform(getGameState(this, c.id)));
     }
 }

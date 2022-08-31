@@ -6,7 +6,8 @@
         " . playersboard ."
         " . roundcontrol .";
     grid-template-columns: 5fr 20fr 5fr;
-    grid-template-rows: 80px auto auto auto;
+    grid-template-rows: 60px auto auto auto;
+    row-gap: 10px;
     justify-content: center;
     align-items: center;
     padding: 10px;

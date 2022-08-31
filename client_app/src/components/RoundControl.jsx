@@ -30,7 +30,7 @@ export default function RoundControl({ handlers, actions, configurations }) {
         <div className="roundcontrol">
             <section className="bet-section">
                 {configurations &&
-                    <div style={{ alignSelf: "center" }}>
+                    <div style={{ alignSelf: "center", whiteSpace: "nowrap" }}>
                         Min Bet: {configurations?.MIN_BET}
                     </div>
                 }

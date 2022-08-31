@@ -5,6 +5,8 @@
 }
 
 html {
+  background-image: url('assets/background.png');
+  background-repeat: repeat-y;
   height: 100%;
 }
 
@@ -15,8 +17,6 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-image: url("assets/background.png");
-  background-size: cover;
   height: 100%;
 }
 

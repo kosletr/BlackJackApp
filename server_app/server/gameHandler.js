@@ -19,7 +19,7 @@ module.exports = class GameHandler {
 
     handleDisconnection(connection) {
         const clientToDisconnect = this.clientsMap.get(connection);
-        if (!clientToDisconnect) logger.error("Client not found.");
+        if (!clientToDisconnect) logger.info("Client was not registered.");
         if (clientToDisconnect?.gameId) this.#findGameByClientAndExit(clientToDisconnect);
         this.clientsMap.delete(connection);
     }

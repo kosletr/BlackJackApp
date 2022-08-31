@@ -73,10 +73,4 @@ describe('game', () => {
 
     })
 
-    describe('Two rounds', () => {
-
-        it("should ... when ...", () => {
-
-        })
-    })
 })

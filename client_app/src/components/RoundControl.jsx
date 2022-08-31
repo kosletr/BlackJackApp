@@ -28,15 +28,17 @@ export default function RoundControl({ handlers, actions, configurations }) {
 
     return (
         <div className="roundcontrol">
-            {configurations &&
-                <section>
-                    Min Bet: {configurations?.MIN_BET}
-                </section>
-            }
             <section className="bet-section">
+                {configurations &&
+                    <div style={{ alignSelf: "center" }}>
+                        Min Bet: {configurations?.MIN_BET}
+                    </div>
+                }
                 <input
                     placeholder="Bet"
                     type="number"
+                    min={configurations?.MIN_BET || 0}
+                    max={configurations?.totalAmount}
                     onChange={e => setBet(parseInt(e.target.value))}
                     disabled={!canBet}
                     value={bet}

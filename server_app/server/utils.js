@@ -29,4 +29,4 @@ function sendToClient(connection, data) {
     connection.send(JSON.stringify(data));
 }
 
-module.exports = { sendOkResponse, sendBadResponse, sendInternalServerErrorResponse, createRequestModel };
+module.exports = { sendOkResponse, sendBadResponse, sendInternalServerErrorResponse, createRequestModel, sendToClient };

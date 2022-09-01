@@ -17,6 +17,8 @@
     padding: 10px;
     gap: 10px;
     width: 100%;
+    max-width: 1000px;
+    align-self: center;
     color: white;
     text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
@@ -28,7 +30,7 @@
 }
 
 .dealerboard {
-    min-height: 180px;
+    min-height: 275px;
     width: 100%;
     border: 2px solid lightgreen;
     border-radius: 15px;
@@ -74,7 +76,7 @@
 }
 
 .bet__info {
-    align-self: center;
+    margin: auto 10px;
     white-space: nowrap;
 }
 
@@ -90,7 +92,7 @@
 .playersboard {
     border: 2px solid lightgreen;
     border-radius: 15px;
-    min-height: 180px;
+    min-height: 275px;
     width: 100%;
     margin: 10px;
     padding: 10px;

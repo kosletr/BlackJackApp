@@ -18,7 +18,7 @@ export default function ParticipantBoard({ playerId, participant, turn, showFlip
                 {participant.outcome}
             </div>
             }
-            {participant.totalAmount &&
+            {(participant.totalAmount || participant.totalAmount === 0) &&
                 <div>
                     <div>Total: {participant.totalAmount}</div>
                     <div>Bet: {participant.currentBet}</div>

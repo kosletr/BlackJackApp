@@ -28,28 +28,30 @@ export default function RoundControl({ handlers, actions, configurations }) {
 
     return (
         <div className="roundcontrol">
-            <section className="bet-section">
+            <section className="bet">
                 {configurations &&
-                    <div style={{ alignSelf: "center", whiteSpace: "nowrap" }}>
+                    <div className="bet__info">
                         Min Bet: {configurations?.MIN_BET}
                     </div>
                 }
-                <input
-                    placeholder="Bet"
-                    type="number"
-                    min={configurations?.MIN_BET || 0}
-                    max={configurations?.totalAmount}
-                    onChange={e => setBet(parseInt(e.target.value))}
-                    disabled={!canBet}
-                    value={bet}
-                />
-                <img
-                    name="bet"
-                    className={"roundcontrol__img" + (canBet ? "" : " roundcontrol__img--disabled")}
-                    src={canBet ? bet_img : bet_img_disabled}
-                    alt="Casino chips indicating that the player wants to bet."
-                    onClick={handleBetButton}
-                />
+                <div className="bet__form">
+                    <input
+                        placeholder="Bet"
+                        type="number"
+                        min={configurations?.MIN_BET || 0}
+                        max={configurations?.totalAmount}
+                        onChange={e => setBet(parseInt(e.target.value))}
+                        disabled={!canBet}
+                        value={bet}
+                    />
+                    <img
+                        name="bet"
+                        className={"roundcontrol__img" + (canBet ? "" : " roundcontrol__img--disabled")}
+                        src={canBet ? bet_img : bet_img_disabled}
+                        alt="Casino chips indicating that the player wants to bet."
+                        onClick={handleBetButton}
+                    />
+                </div>
             </section>
             <section className="hit-stand-section">
                 <div className="hit">

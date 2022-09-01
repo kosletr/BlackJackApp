@@ -15,6 +15,7 @@ const gameHandlers = new GameHandlers(ws);
 
 function App() {
   const [data, setData] = useState({});
+  const [disconnected, setDisconnected] = useState(false);
 
   useEffect(() => {
     ws.onopen = () => {
@@ -23,6 +24,7 @@ function App() {
 
     ws.onmessage = (message) => {
       const response = JSON.parse(message.data);
+      if (response?.data === "heartbeat") { console.log("PING"); return };
       if (response.status === 200) {
         setData(response);
         console.log(response);
@@ -33,9 +35,14 @@ function App() {
         toast.error(response.message);
       }
     };
+
+    ws.onclose = () => {
+      setDisconnected(true);
+    }
   }, []);
 
   return (< >
+    <nav className='disconnected' hidden={!disconnected}>Connection is lost. Please refresh your browser.</nav>
     <ToastContainer theme="colored" />
     <div className='game'>
       <GameControl handlers={gameHandlers} actions={data?.state?.allowedMoves} />

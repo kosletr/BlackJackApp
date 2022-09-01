@@ -60,7 +60,9 @@ module.exports = class Round {
     }
 
     #drawFromTheCards(participant) {
-        participant.takeACard(this.gameCards.draw());
+        const card = this.gameCards.draw();
+        participant.takeACard(card);
+        logger.info(`Participant: ${participant.id}draw the card: `, card);
     }
 
     #resetTurnAfterDealingTheCards() {
@@ -129,9 +131,9 @@ module.exports = class Round {
     }
 
     split() {
-        if (!this.#canSplit()) throw new Error("Split is allowed when the player has two cards with the same value.");
+        if (!this.#canSplit()) throw new GameError("Split is allowed when the player has two cards with the same value.");
         const [firstHand, secondHand] = this._selectedPlayer.split();
-        this._players.splice(this.currentIndex, 1, firstHand, secondHand);
+        this._players.splice(this.playerIndex, 1, firstHand, secondHand);
         this.#updateSelectedPlayer();
         this._allowedMoves = [ACTIONS.HIT, ACTIONS.STAND];
     }

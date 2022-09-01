@@ -477,6 +477,37 @@ describe('Round', () => {
 
                     expect(round.allowedMoves).not.toContain(ACTIONS.SPLIT);
                 })
+
+                
+                it("should test this case", () => {
+                    const client1 = new Client(null, "Kostas");
+                    player1 = new Player(client1);
+                    const client2 = new Client(null, "G");
+                    player2 = new Player(client2);
+                    const client3 = new Client(null, "Nick the greek");
+                    let player3 = new Player(client3);
+                    const client4 = new Client(null, "Thano");
+                    let player4 = new Player(client4);
+
+                    round = new Round([player1, player2, player3, player4]);
+                    round.gameCards = drawCustomCards([
+                        { rank: '2', suit: 'clubs' }, { rank: '9', suit: 'clubs' }, { rank: 'J', suit: 'clubs' }, { rank: '10', suit: 'clubs' }, { rank: '10', suit: 'clubs' },
+                        { rank: 'Q', suit: 'clubs' }, { rank: '10', suit: 'clubs' }, { rank: 'J', suit: 'clubs' }, { rank: '10', suit: 'clubs' },
+                        { rank: '10', suit: 'clubs' }, 
+                        { rank: '4', suit: 'clubs' }, { rank: '2', suit: 'clubs' },  { rank: 'K', suit: 'clubs' },
+                    ]);
+
+                    round.bet({ amount: 50 });
+                    round.bet({ amount: 50 });
+                    round.bet({ amount: 50 });
+                    round.bet({ amount: 50 });
+                    round.hit();
+                    round.stand();
+                    round.split();
+
+                    expect(round.players).toHaveLength(5);
+                    expect(round.selectedPlayer.client).toBe(client3);
+                })
             })
 
             describe('removePlayerByClientId', () => {
@@ -642,8 +673,6 @@ describe('Round', () => {
                     expect(round.allowedMoves).toContain(ACTIONS.STAND);
                     expect(round.selectedPlayer.client.id).toBe(player2.client.id);
                 })
-
-
 
             })
         })

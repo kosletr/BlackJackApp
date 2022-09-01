@@ -153,6 +153,16 @@ describe('Round', () => {
             expect(round.allowedMoves).toEqual([]);
             expect(round.isCompleted()).toBeTruthy();
         })
+
+        describe('double-bet', () => {
+            it("should be able to double-bet when .", () => {
+                round = new Round([player1]);
+
+                round.bet({ amount: 499 });
+
+                expect(round.allowedMoves).toContain(ACTIONS.DOUBLE_DOWN);
+            })
+        })
     })
 
     describe("Two Players", () => {
@@ -478,7 +488,7 @@ describe('Round', () => {
                     expect(round.allowedMoves).not.toContain(ACTIONS.SPLIT);
                 })
 
-                
+
                 it("should test this case", () => {
                     const client1 = new Client(null, "Kostas");
                     player1 = new Player(client1);
@@ -493,8 +503,8 @@ describe('Round', () => {
                     round.gameCards = drawCustomCards([
                         { rank: '2', suit: 'clubs' }, { rank: '9', suit: 'clubs' }, { rank: 'J', suit: 'clubs' }, { rank: '10', suit: 'clubs' }, { rank: '10', suit: 'clubs' },
                         { rank: 'Q', suit: 'clubs' }, { rank: '10', suit: 'clubs' }, { rank: 'J', suit: 'clubs' }, { rank: '10', suit: 'clubs' },
-                        { rank: '10', suit: 'clubs' }, 
-                        { rank: '4', suit: 'clubs' }, { rank: '2', suit: 'clubs' },  { rank: 'K', suit: 'clubs' },
+                        { rank: '10', suit: 'clubs' },
+                        { rank: '4', suit: 'clubs' }, { rank: '2', suit: 'clubs' }, { rank: 'K', suit: 'clubs' },
                     ]);
 
                     round.bet({ amount: 50 });

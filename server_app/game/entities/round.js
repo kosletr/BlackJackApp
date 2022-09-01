@@ -97,7 +97,7 @@ module.exports = class Round {
 
     #canDoubleDown(amount) {
         return this._selectedPlayer?.cards.length === 2 &&
-            2 * amount <= this._selectedPlayer?.client.totalAmount;
+            amount <= this._selectedPlayer?.client.totalAmount;
     }
 
     #canSplit() {

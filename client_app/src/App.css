@@ -36,6 +36,7 @@
     border-radius: 15px;
     margin: 10px;
     padding: 10px;
+    overflow: auto;
 }
 
 .board-title {
@@ -93,7 +94,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content:space-between;
+    justify-content: space-between;
 }
 
 .playersboard {
@@ -103,6 +104,7 @@
     width: 100%;
     margin: 10px;
     padding: 10px;
+    overflow: auto;
 }
 
 .players {
@@ -131,7 +133,7 @@
 
 .participant__info--active {
     font-weight: bold;
-    color:turquoise;
+    color: turquoise;
     text-decoration: underline;
 }
 

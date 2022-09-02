@@ -44,7 +44,7 @@ Notes for this version of the game:
 5. After every player has played, you can see if the result is a `win`, a `defeat` or a `tie`.
 ![](screenshots/defeat.png)
 
-6. To start another round with the same players click the `Start Next Round` button and play again.
+6. To start another round with the same players click the `Next Round` button and play again.
 ![](screenshots/win.png)
 
 7. You can also play in separate rooms. For example one player could exit the game and start the game while the others are already in a room. This will create a new room for that player while the others will continue playing together.
@@ -56,7 +56,7 @@ Notes for this version of the game:
 ## Setup Instructions (development)
 
 1. Clone the repository.
-2. install node dependencies.
+2. Install node dependencies.
 
     ```
     cd server_app && npm i

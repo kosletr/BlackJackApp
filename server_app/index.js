@@ -9,10 +9,10 @@ const wss = new WebSocket.Server({ port }, () => logger.info(`Listening on port 
 
 const connHandlers = new ConnectionsHandler();
 
-const HEARTBEAT_FREQ = 2000;
+const HEARTBEAT_PERIOD = 2000;
 
 wss.on('connection', (ws) => {
-    const id = setInterval(() => sendToClient(ws, { data: "heartbeat" }), HEARTBEAT_FREQ);
+    const id = setInterval(() => sendToClient(ws, { data: "heartbeat" }), HEARTBEAT_PERIOD);
     connHandlers.handleClientConnection(ws);
     ws.on('message', (message) => connHandlers.handleClientMessage(ws, message));
     ws.on("close", () => {

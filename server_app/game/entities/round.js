@@ -15,26 +15,36 @@ module.exports = class Round {
         this.#updateSelectedPlayer();
         this.dealer = new Dealer(this.gameId);
         this.gameCards = new GameCards();
-        this._allowedMoves = [ACTIONS.BET];
+        this.#resetAllowedMoves([ACTIONS.BET]);
         this.dealtCards = false;
     }
 
+    #resetAllowedMoves(actions) {
+        this._players.forEach(p => p.allowedMoves = actions);
+    }
+
     #updateSelectedPlayer() {
-        this._selectedPlayer = this._players[this.playerIndex];
+        this._selectedParticipant = this._players[this.playerIndex];
         logger.info("Selected Player: ", getPlayerState(this));
     }
 
-    bet({ amount }) {
-        this._selectedPlayer.bet(amount);
-        if (!this.#hasEveryPlayerBet()) return this.#askNextPlayerToBet();
+    bet({ playerId, amount }) {
+        const playerToBet = this.#findPlayerById(playerId);
+        playerToBet.bet(amount);
+        playerToBet.allowedMoves = [];
+        if (!this.#hasEveryPlayerBet()) return;
         this.#finishBeting(amount);
+    }
+
+    #findPlayerById(playerId) {
+        return this._players.find(p => p.id === playerId);
     }
 
     #finishBeting(amount) {
         this.#dealCards();
         this.#resetTurnAfterDealingTheCards();
-        if (this.#canDoubleDown(amount)) this._allowedMoves.push(ACTIONS.DOUBLE_DOWN);
-        if (this.#canSplit()) this._allowedMoves.push(ACTIONS.SPLIT);
+        if (this.#canDoubleDown(amount)) this._selectedParticipant.allowedMoves.push(ACTIONS.DOUBLE_DOWN);
+        if (this.#canSplit()) this._selectedParticipant.allowedMoves.push(ACTIONS.SPLIT);
         this.dealtCards = true;
     }
 
@@ -42,15 +52,11 @@ module.exports = class Round {
         return this.players.every(p => p.currentBet);
     }
 
-    #askNextPlayerToBet() {
-        this._allowedMoves = [ACTIONS.BET];
-        this.#setNextParticipant();
-    }
-
     #setNextParticipant() {
+        if (this._selectedParticipant) this._selectedParticipant.allowedMoves = [];
         this.playerIndex++;
         this.#updateSelectedPlayer();
-        if (!this._selectedPlayer) this._selectedPlayer = this.dealer;
+        if (!this._selectedParticipant) this._selectedParticipant = this.dealer;
     }
 
     #dealCards() {
@@ -67,17 +73,17 @@ module.exports = class Round {
 
     #resetTurnAfterDealingTheCards() {
         this.playerIndex = -1;
-        this.#finishParticipantHand();
+        this.#continueToNextParticipant();
     }
 
-    #finishParticipantHand() {
+    #continueToNextParticipant() {
         if (this.isCompleted()) return this.#finishRound();
         this.#setNextParticipant();
         if (this.#isDealersTurn()) return this.dealer.play(this);
-        if (this.selectedPlayer.hasBlackJack()) return this.#finishParticipantHand();
-        this._allowedMoves = [ACTIONS.HIT, ACTIONS.STAND];
-        if (this.#canDoubleDown(this._selectedPlayer.currentBet)) this._allowedMoves.push(ACTIONS.DOUBLE_DOWN);
-        if (this.#canSplit()) this._allowedMoves.push(ACTIONS.SPLIT);
+        if (this._selectedParticipant.hasBlackJack()) return this.#continueToNextParticipant();
+        this._selectedParticipant.allowedMoves = [ACTIONS.HIT, ACTIONS.STAND];
+        if (this.#canDoubleDown(this._selectedParticipant.currentBet)) this._selectedParticipant.allowedMoves.push(ACTIONS.DOUBLE_DOWN);
+        if (this.#canSplit()) this._selectedParticipant.allowedMoves.push(ACTIONS.SPLIT);
     }
 
     isCompleted() {
@@ -85,77 +91,81 @@ module.exports = class Round {
     }
 
     #finishRound() {
-        this._selectedPlayer = null;
-        this._allowedMoves = [];
+        this._selectedParticipant = null;
+        this.#resetAllowedMoves([]);
         this._players.forEach(p => p.transferMoney(this.dealer));
         logger.info("Round is completed.");
     }
 
     #isDealersTurn() {
-        return this._selectedPlayer?.id === this.dealer.id;
+        return this._selectedParticipant?.id === this.dealer.id;
     }
 
     #canDoubleDown(amount) {
-        return this._selectedPlayer?.cards.length === 2 &&
-            amount <= this._selectedPlayer?.client.totalAmount;
+        return this._selectedParticipant?.cards.length === 2 &&
+            amount <= this._selectedParticipant?.client.totalAmount;
     }
 
     #canSplit() {
-        if (!this._selectedPlayer) return false;
-        if (this._selectedPlayer.cards.length !== 2) return false;
-        const firstCard = this._selectedPlayer.cards[0];
+        if (!this._selectedParticipant) return false;
+        if (this._selectedParticipant.cards.length !== 2) return false;
+        const firstCard = this._selectedParticipant.cards[0];
         const isAnAceCard = firstCard.points.length > 1;
         if (isAnAceCard) return false;
-        const secondCard = this._selectedPlayer.cards[1];
+        const secondCard = this._selectedParticipant.cards[1];
         return firstCard.points === secondCard.points;
     }
 
     hit() {
-        this.#drawFromTheCards(this._selectedPlayer);
-        if (this._selectedPlayer.hasBestScore()) return this.#finishParticipantHand();
-        if (this._selectedPlayer.isBust()) {
-            if (!this.#isDealersTurn()) this._selectedPlayer.lose();
-            return this.#finishParticipantHand();
+        this.#drawFromTheCards(this._selectedParticipant);
+        if (this._selectedParticipant.hasBestScore()) return this.#continueToNextParticipant();
+        if (this._selectedParticipant.isBust()) {
+            if (!this.#isDealersTurn()) this._selectedParticipant.lose();
+            return this.#continueToNextParticipant();
         }
-        this._allowedMoves = [ACTIONS.HIT, ACTIONS.STAND];
+        this._selectedParticipant.allowedMoves = [ACTIONS.HIT, ACTIONS.STAND];
     }
 
     stand() {
-        this.#finishParticipantHand();
+        this.#continueToNextParticipant();
     }
 
     doubledown() {
-        this._selectedPlayer.bet(this._selectedPlayer.currentBet);
-        this.#drawFromTheCards(this._selectedPlayer);
-        this.#finishParticipantHand();
+        this._selectedParticipant.bet(this._selectedParticipant.currentBet);
+        this.#drawFromTheCards(this._selectedParticipant);
+        this.#continueToNextParticipant();
     }
 
     split() {
         if (!this.#canSplit()) throw new GameError("Split is allowed when the player has two cards with the same value.");
-        const [firstHand, secondHand] = this._selectedPlayer.split();
+        const [firstHand, secondHand] = this._selectedParticipant.split();
         this._players.splice(this.playerIndex, 1, firstHand, secondHand);
         this.#updateSelectedPlayer();
-        this._allowedMoves = [ACTIONS.HIT, ACTIONS.STAND];
+        this._selectedParticipant.allowedMoves = [ACTIONS.HIT, ACTIONS.STAND];
     }
 
     removePlayerByClientId(clientId) {
         logger.info(`Removing player with clientId: ${clientId} from round: ${this.id}`);
         this._players = this._players.filter(p => p.client.id !== clientId);
-        if (this._players.length === 0) this.#finishParticipantHand();
-        else if (this._selectedPlayer?.client?.id === clientId) {
+        if (this._players.length === 0) this.#continueToNextParticipant();
+        else if (!this.#hasEveryPlayerBet()) return;
+        else if (!this.dealtCards) this.#finishBeting(this._selectedParticipant.currentBet);
+        else if (this._selectedParticipant?.client?.id === clientId) {
             this.playerIndex--;
-            if (!this.#hasEveryPlayerBet()) this.#askNextPlayerToBet();
-            else if (!this.dealtCards) this.#finishBeting(this.selectedPlayer.currentBet);
-            else this.#finishParticipantHand();
+            this.#continueToNextParticipant();
         }
     }
 
-    get selectedPlayer() {
-        return this._selectedPlayer;
+    getAllowedRoundMovesForClient(clientId) {
+        const playersOfClient = this.players?.filter(p => p.client.id === clientId);
+        return (playersOfClient?.length > 1)
+            ? playersOfClient.find(p => p.id === this.selectedParticipant?.id)?.allowedMoves || []
+            : playersOfClient[0]?.allowedMoves || [];
     }
 
-    get allowedMoves() {
-        return this._allowedMoves;
+
+    get selectedParticipant() {
+        return this._selectedParticipant;
     }
 
     get players() {

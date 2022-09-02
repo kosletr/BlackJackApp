@@ -1,6 +1,8 @@
 const GameError = require("../game/entities/gameError");
 const { commands, paramConstraints } = require('../game/constants');
 
+const MAX_PARAM_LENGTH = 20;
+
 // Can also be replaced by Joi.
 module.exports = function validateRequest(request) {
     const { name, params } = request;
@@ -20,4 +22,6 @@ function validateCommandParams(commandName, commandParams) {
     const missingParams = new Set(paramConstraints[commandName]);
     Object.keys(commandParams).forEach(p => (commandParams[p] || commandParams[p] === 0) && missingParams.delete(p));
     if (missingParams.size > 0) return `Missing Parameters from params: ${JSON.stringify([...missingParams])}`;
+    const hasLongParameters = Object.values(commandParams).some(p => p.length > MAX_PARAM_LENGTH);
+    if (hasLongParameters) return `Parameters cannot contain more than ${MAX_PARAM_LENGTH} characters`;
 }

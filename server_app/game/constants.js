@@ -48,7 +48,7 @@ const requiredParameters = {
     },
     gameCommands: {
         startGame: [],
-        startRound: [],
+        startNextRound: [],
         exitGame: [],
     },
     roundCommands: {

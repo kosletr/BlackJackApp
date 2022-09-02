@@ -1,5 +1,5 @@
 const { MIN_BET } = require("../configurations");
-const { OUTCOMES } = require("../constants");
+const { OUTCOMES, ACTIONS } = require("../constants");
 const GameError = require("./gameError");
 const Participant = require("./participant");
 
@@ -9,6 +9,7 @@ module.exports = class Player extends Participant {
         this.currentBet = 0;
         this.outcome = null;
         this.client = client;
+        this.allowedMoves = [];
     }
 
     bet(amount) {

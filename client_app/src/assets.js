@@ -41,9 +41,8 @@ export const sounds = {
 };
 
 export const getCardImagePath = (function () {
-    const cardPaths = {};
+    const mapCardToImagePath = {};
     const r = require.context("./assets/images/cards", false, /\.(png)$/);
-    r.keys().forEach(item => cardPaths[item.replace('./', '').replace('.png', '')] = r(item));
-    console.log(cardPaths)
-    return (rank, suit) => cardPaths[`${rank}_${suit}`];
+    r.keys().forEach(filename => mapCardToImagePath[filename.replace('./', '').replace('.png', '')] = r(filename));
+    return (rank, suit) => mapCardToImagePath[`${rank}_${suit}`];
 })();

@@ -6,9 +6,9 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "jest --watchAll --verbose --coverage",
-    "test:unit": "jest --watchAll --verbose tests/unit",
-    "test:int": "jest --watchAll --verbose tests/int"
+    "test": "export NODE_ENV=testing || set NODE_ENV=testing&& jest --watchAll --verbose --coverage",
+    "test:unit": "export NODE_ENV=testing || set NODE_ENV=testing&& jest --watchAll --verbose tests/unit",
+    "test:int": "export NODE_ENV=testing || set NODE_ENV=testing&& jest --watchAll --verbose tests/int"
   },
   "engines": {
     "node": "16.17.0"

@@ -8,7 +8,7 @@ const commands = {
     registerClient: "handleRegisterCommand",
     startGame: "handleStartGameCommand",
     exitGame: "handleExitGameCommand",
-    startRound: "handleGameCommand",
+    startNextRound: "handleGameCommand",
     bet: "handleGameCommand",
     hit: "handleGameCommand",
     stand: "handleGameCommand",

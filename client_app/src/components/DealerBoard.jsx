@@ -6,12 +6,15 @@ export default function DealerBoard({ playerId, dealer, turn }) {
     return (
         <div className='dealerboard players'>
             <div className='board-title'>Casino</div>
-            <ParticipantBoard
-                playerId={playerId}
-                participant={dealer}
-                turn={turn}
-                showFlippedCard={showFlippedCard}
-            />
+            <div className="dealer">
+                <ParticipantBoard
+                    className="dealer"
+                    playerId={playerId}
+                    participant={dealer}
+                    turn={turn}
+                    showFlippedCard={showFlippedCard}
+                />
+            </div>
         </div>
     )
 }

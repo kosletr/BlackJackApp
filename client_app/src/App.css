@@ -17,6 +17,7 @@
     padding: 10px;
     gap: 10px;
     width: 100%;
+    margin: auto;
     max-width: 1000px;
     align-self: center;
     color: white;
@@ -26,16 +27,20 @@
 .registration_form {
     display: flex;
     justify-content: center;
-    margin: 20px;
+    margin: 20px auto;
 }
 
 .dealerboard {
-    min-height: 275px;
+    min-height: 325px;
+    min-width: 400px;
     width: 100%;
     border: 2px solid lightgreen;
     border-radius: 15px;
-    margin: 10px;
+    margin: 10px auto;
     padding: 10px;
+}
+
+.dealer {
     overflow: auto;
 }
 
@@ -53,7 +58,7 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    margin: 20px;
+    margin: 20px auto;
     max-width: 800px;
 }
 
@@ -98,13 +103,13 @@
 }
 
 .playersboard {
+    min-height: 325px;
+    min-width: 400px;
     border: 2px solid lightgreen;
     border-radius: 15px;
-    min-height: 275px;
     width: 100%;
-    margin: 10px;
+    margin: 10px auto;
     padding: 10px;
-    overflow: auto;
 }
 
 .players {
@@ -115,6 +120,7 @@
 .playerslist {
     display: flex;
     gap: 30px;
+    height: 100%;
     overflow: auto;
 }
 
@@ -122,13 +128,13 @@
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
-    align-items: center;
-    width: 100%;
     gap: 20px;
+    margin: 0 auto;
 }
 
 .participant__info {
     font-size: 1.2rem;
+    align-self: center;
 }
 
 .participant__info--active {
@@ -140,6 +146,7 @@
 .cards {
     display: flex;
     gap: 10px;
+    margin: 0 auto;
 }
 
 .card {
@@ -154,6 +161,7 @@
     height: 20px;
     font-size: larger;
     font-weight: bold;
+    margin: 0 auto;
 }
 
 .outcome--win {
@@ -166,4 +174,8 @@
 
 .outcome--tie {
     color: rgb(99, 182, 230);
+}
+
+.amounts {
+    margin: 0 auto;
 }

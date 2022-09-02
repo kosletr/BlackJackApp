@@ -1,6 +1,6 @@
 const Player = require("../../game/entities/player");
 const Card = require("../../game/entities/card");
-const Client = require("../../server/client");
+const Client = require("../../game/entities/client");
 
 describe('Player', () => {
     let player;

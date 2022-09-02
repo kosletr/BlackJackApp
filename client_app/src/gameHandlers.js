@@ -15,8 +15,8 @@ export default class GameHandlers {
         this.#sendWebSocket({ name: "startGame", params: {} })
     }
 
-    handleStartRound() {
-        this.#sendWebSocket({ name: "startRound", params: {} })
+    handleStartNextRound() {
+        this.#sendWebSocket({ name: "startNextRound", params: {} })
     }
 
     handleBet(bet) {

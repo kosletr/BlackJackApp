@@ -1,17 +1,19 @@
+const logger = require("../../config/logger");
+
 module.exports = function getGameState(game, clientId) {
     return {
         allowedMoves: getAllowedMoves(game, clientId),
         dealer: getDealerState(game.currentRound?.dealer),
         players: getPlayersState(game.currentRound?.players),
-        selectedPlayerId: game.currentRound?.selectedPlayer?.id,
+        selectedPlayerId: game.currentRound?.selectedParticipant?.id,
     }
 }
 
 
 function getAllowedMoves(game, clientId) {
-    const roundMoves = game.currentRound?.allowedMoves;
     const gameMoves = [...game.allowedMoves];
-    if (roundMoves && clientId === game.getCurrentClientId()) gameMoves.push(...roundMoves);
+    if (!game.currentRound) return gameMoves;
+    gameMoves.push(...game.currentRound.getAllowedRoundMovesForClient(clientId));
     return gameMoves;
 }
 
@@ -34,7 +36,8 @@ function getPlayersState(players) {
         outcome: p.outcome,
         score: p.score,
         clientId: p.client.id,
-        totalAmount: p.client.totalAmount
+        totalAmount: p.client.totalAmount,
+        allowedMoves: p.allowedMoves
     }))
 }
 

@@ -1,7 +1,7 @@
 const logger = require("../config/logger");
 const Game = require("../game/entities/game");
 const GameError = require("../game/entities/gameError");
-const Client = require("./client");
+const Client = require("../game/entities/client");
 const { sendOkResponse } = require("./utils");
 
 module.exports = class GameHandler {

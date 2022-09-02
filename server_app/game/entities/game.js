@@ -3,7 +3,6 @@ const Player = require("./player");
 const getGameState = require("./gameState");
 const { generateUniqueId } = require("../../utils");
 const GameError = require("./gameError");
-const { ACTIONS, requiredParameters } = require("../constants");
 const logger = require("../../config/logger");
 
 module.exports = class Game {
@@ -13,66 +12,52 @@ module.exports = class Game {
         this.rounds = [];
         this.allowedMoves = [];
         this.currentRound;
-        this.commands = {
-            "startRound": this.startRound.bind(this),
-            "exitGame": this.exitGame.bind(this),
-        };
-    }
-
-    #getPlayersFromClients() {
-        return this.clients.map(c => new Player(c));
     }
 
     startGame() {
-        if (this.clients.length === 0) throw new GameError("Cannot start a game without players");
-        this.currentRound = new Round(this.#getPlayersFromClients(), this.id);
+        this.#startNewRoundWithPlayers(this.#createPlayersFromClients());
+    }
+
+    startNextRound() {
+        const playersThatDidNotExitTheGame = this.previousPlayers?.filter(p => this.clients.includes(p.client));
+        this.#startNewRoundWithPlayers(playersThatDidNotExitTheGame || this.#createPlayersFromClients());
+    }
+
+    #startNewRoundWithPlayers(players) {
+        if (this.clients.length === 0) throw new GameError("Cannot start a game/round without any players.");
+        this.currentRound = new Round(players, this.id);
         this.rounds.push(this.currentRound);
         this.allowedMoves = ["exitGame"];
-        this.#updateCommandsForNewRound();
         this.informAllClientsOfTheGame();
     }
 
-    startRound() {
-        if (this.clients.length === 0) throw new GameError("Cannot start a game without players");
-        this.currentRound = new Round(this.previousPlayers || this.#getPlayersFromClients(), this.id);
-        this.rounds.push(this.currentRound);
-        this.allowedMoves = ["exitGame"];
-        this.#updateCommandsForNewRound();
-        this.informAllClientsOfTheGame();
-    }
-
-    #updateCommandsForNewRound() {
-        this.commands[ACTIONS.BET] = this.currentRound.bet.bind(this.currentRound);
-        this.commands[ACTIONS.HIT] = this.currentRound.hit.bind(this.currentRound);
-        this.commands[ACTIONS.STAND] = this.currentRound.stand.bind(this.currentRound);
-        this.commands[ACTIONS.SPLIT] = this.currentRound.split.bind(this.currentRound);
-        this.commands[ACTIONS.DOUBLE_DOWN] = this.currentRound.doubledown.bind(this.currentRound);
+    #createPlayersFromClients() {
+        return this.clients.map(c => new Player(c));
     }
 
     executeCommand(clientId, command) {
         this.#checkIfCommandIsCurrentlyAllowed(command, clientId);
-        const commandHandler = this.commands[command.name];
-        commandHandler({ clientId, ...command.params });
+        const playerId = this.currentRound?.players?.find(p => p.client.id === clientId)?.id; // used only for betting.
+        if (!playerId) throw new Error("Client not in this game.");
+        const roundCommand = this.currentRound?.[command.name]?.bind(this.currentRound);
+        const gameCommand = this[command.name]?.bind(this);
+        const commandHandler = roundCommand || gameCommand;
+        commandHandler({ playerId, ...command.params });
         if (this.currentRound.isCompleted()) this.finishCurrentRound();
         this.informAllClientsOfTheGame();
     }
 
     #checkIfCommandIsCurrentlyAllowed(command, clientId) {
-        if (Object.keys(requiredParameters.gameCommands).includes(command.name)) {
-            if (!this.allowedMoves.includes(command.name))
-                throw new GameError(`Command '${command.name}' is not allowed now.`);
-        } else {
-            if (this.getCurrentClientId() !== clientId)
-                throw new GameError("It is not your turn.");
-            if (!this.currentRound.allowedMoves.includes(command.name))
-                throw new GameError(`Command '${command.name}' is not allowed now.`);
-        }
+        const isAllowedGameCommand = this.allowedMoves.includes(command.name);
+        const isAllowedRoundCommand = this.currentRound?.getAllowedRoundMovesForClient(clientId).includes(command.name);
+        if (!isAllowedGameCommand && !isAllowedRoundCommand)
+            throw new GameError(`Command '${command.name}' is not allowed now.`);
     }
 
     finishCurrentRound() {
         const playersForNextRounds = this.#keepPlayersForNextRounds();
         this.previousPlayers = playersForNextRounds.map(p => p.clone());
-        this.allowedMoves = ["startRound", "exitGame"];
+        this.allowedMoves = ["startNextRound", "exitGame"];
     }
 
     #keepPlayersForNextRounds() {
@@ -89,7 +74,7 @@ module.exports = class Game {
 
     exitGame({ clientId }) {
         const client = this.clients.find(c => c.id === clientId);
-        if (!client) throw new GameError("Client not found.");
+        if (!client) throw new GameError("Client was not found.");
         this.removeClient(client);
         if (this.isCompleted()) this.allowedMoves = ["startGame"];
     }
@@ -98,14 +83,10 @@ module.exports = class Game {
         return this.clients.length === 0;
     }
 
-    getCurrentClientId() {
-        return this.currentRound?.selectedPlayer?.client?.id;
-    }
-
     addClient(client) {
         client.gameId = this.id;
         const foundClient = this.clients.find(c => c.id === client.id);
-        if (foundClient) throw new Error("Client already in");
+        if (foundClient) throw new Error("Client already in this game.");
         this.clients.push(client);
         if (!this.allowedMoves.includes("startGame")) this.allowedMoves.push("startGame");
         this.informAllClientsOfTheGame();

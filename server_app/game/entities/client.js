@@ -1,6 +1,6 @@
-const { generateUniqueId } = require("../utils");
-const { sendOkResponse } = require("./utils");
-const { INITIAL_AMOUNT } = require("../game/configurations");
+const { generateUniqueId } = require("../../utils");
+const { sendOkResponse } = require("../../server/utils");
+const { INITIAL_AMOUNT } = require("../configurations");
 
 module.exports = class Client {
     constructor(connection, name) {

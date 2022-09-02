@@ -74,7 +74,7 @@ export default function RoundControl({ handlers, actions, configurations }) {
                     <img
                         name="hit"
                         className={"roundcontrol__img" + (canHit ? "" : " roundcontrol__img--disabled")}
-                        src={canHit ? images.deck : images.deck_disabled}
+                        src={canHit ? images.hit : images.hit_disabled}
                         alt="A deck of cards."
                         onClick={onHit}
                     />

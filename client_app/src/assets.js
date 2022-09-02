@@ -1,8 +1,8 @@
 import bet_image from "./assets/images/bet.png";
 import bet_disabled_image from "./assets/images/bet_disabled.png";
 import flipped_image from './assets/images/flipped.png';
-import deck_image from "./assets/images/deck.png";
-import deck_disabled_image from "./assets/images/deck_disabled.png";
+import hit_image from "./assets/images/hit.png";
+import hit_disabled_image from "./assets/images/hit_disabled.png";
 import stand_image from "./assets/images/stand.png";
 import stand_disabled_image from "./assets/images/stand_disabled.png";
 import split_image from "./assets/images/split.png";
@@ -21,8 +21,8 @@ export const images = {
     bet: bet_image,
     bet_disabled: bet_disabled_image,
     flipped: flipped_image,
-    deck: deck_image,
-    deck_disabled: deck_disabled_image,
+    hit: hit_image,
+    hit_disabled: hit_disabled_image,
     stand: stand_image,
     stand_disabled: stand_disabled_image,
     split: split_image,

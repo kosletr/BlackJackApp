@@ -5,10 +5,11 @@ A WebSocket implementation of the black-jack game.
 ## Supported Features
 
 Player can:
- - Hit
- - Stand
- - Split
- - Double-down
+ - Bet <img src="client_app/src/assets/images/bet.png" width="15"/>
+ - Hit <img src="client_app/src/assets/images/hit.png" width="10"/>
+ - Stand <img src="client_app/src/assets/images/stand.png" width="15"/>
+ - Split <img src="client_app/src/assets/images/split.png" width="15"/>
+ - Double-down <img src="client_app/src/assets/images/doubledown.png" width="15"/>
 
 Notes:
  - Black-Jack pays 3 : 2
@@ -62,7 +63,7 @@ Tests are also implemented to validate the behavior of the game.
     ```
     npm test:int
     ```
-
+<!-- 
 ## Screenshots of the game
  
 ### Register your client when entering the app.
@@ -91,6 +92,6 @@ Tests are also implemented to validate the behavior of the game.
 
 ### Multiplayer game with two players.
 ![](screenshots/two_players.png)
+ -->
 
-
-## By Konstantinos Letros
+ ## By Konstantinos Letros

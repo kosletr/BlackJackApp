@@ -57,7 +57,7 @@
 }
 
 .roundcontrol__img {
-    border: 3px solid coral;
+    border: 3px solid rgb(255, 225, 0);
     border-radius: 10px;
     padding: 5px;
     cursor: pointer;
@@ -87,6 +87,13 @@
 .hit-stand-section {
     display: flex;
     justify-content: space-evenly;
+}
+
+.command {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content:space-between;
 }
 
 .playersboard {

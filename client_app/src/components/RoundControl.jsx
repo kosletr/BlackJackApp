@@ -70,38 +70,38 @@ export default function RoundControl({ handlers, actions, configurations }) {
                 </div>
             </section>
             <section className="hit-stand-section">
-                <div className="hit">
+                <div className="command">
                     <img
                         name="hit"
                         className={"roundcontrol__img" + (canHit ? "" : " roundcontrol__img--disabled")}
                         src={canHit ? images.hit : images.hit_disabled}
                         alt="A deck of cards."
                         onClick={onHit}
-                    />
+                    />Hit
                 </div>
-                <div className="stand">
+                <div className="command">
                     <img name="stand"
                         className={"roundcontrol__img" + (canStand ? "" : " roundcontrol__img--disabled")}
                         src={canStand ? images.stand : images.stand_disabled}
                         alt="A closed palm facing front indicitaing that the player stands."
                         onClick={onStand}
-                    />
+                    /> Stand
                 </div>
-                <div className="split">
+                <div className="command">
                     <img name="split"
                         className={"roundcontrol__img" + (canSplit ? "" : " roundcontrol__img--disabled")}
                         src={canSplit ? images.split : images.split_disabled}
                         alt="."
                         onClick={onSplit}
-                    />
+                    />Split
                 </div>
-                <div className="doubledown">
+                <div className="command">
                     <img name="doubledown"
                         className={"roundcontrol__img" + (canDoubleDown ? "" : " roundcontrol__img--disabled")}
                         src={canDoubleDown ? images.doubledown : images.doubledown_disabled}
                         alt="A closed palm facing front indicitaing that the player doubles the wager."
                         onClick={onDoubleDown}
-                    />
+                    />Double Down
                 </div>
             </section>
         </div>

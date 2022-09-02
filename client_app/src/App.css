@@ -124,7 +124,7 @@
 
 .participant__info--active {
     font-weight: bold;
-    color: coral;
+    color:turquoise;
     text-decoration: underline;
 }
 
@@ -145,4 +145,16 @@
     height: 20px;
     font-size: larger;
     font-weight: bold;
+}
+
+.outcome--win {
+    color: lawngreen;
+}
+
+.outcome--defeat {
+    color: red;
+}
+
+.outcome--tie {
+    color: rgb(99, 182, 230);
 }

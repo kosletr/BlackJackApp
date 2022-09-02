@@ -1,9 +1,16 @@
 import React from 'react'
 import { useState } from 'react'
+import { sounds } from "../assets";
+
 
 export default function RegistrationForm({ actions, handlers }) {
     const [playerName, setPlayerName] = useState("");
     const canRegisterClient = actions?.includes("registerClient");
+
+    function handleRegisterClient() {
+        sounds.buttonclick.play();
+        handlers.handleRegisterClient(playerName);
+    }
 
     if (!canRegisterClient) return;
     return (
@@ -16,7 +23,7 @@ export default function RegistrationForm({ actions, handlers }) {
             <button
                 className='btn btn--primary'
                 name="registerClient"
-                onClick={() => handlers.handleRegisterClient(playerName)}
+                onClick={handleRegisterClient}
                 disabled={!canRegisterClient}>
                 Register
             </button>

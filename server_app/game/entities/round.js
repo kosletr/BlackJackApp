@@ -62,7 +62,7 @@ module.exports = class Round {
     #drawFromTheCards(participant) {
         const card = this.gameCards.draw();
         participant.takeACard(card);
-        logger.info(`Participant: ${participant.id}draw the card: `, card);
+        logger.info(`Participant: ${participant.id} drew the card: `, card);
     }
 
     #resetTurnAfterDealingTheCards() {

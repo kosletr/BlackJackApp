@@ -1,44 +1,17 @@
 import React from 'react'
 import RegistrationForm from './RegistrationForm';
+import StartGame from './StartGame';
+import StartRound from './StartRound';
+import ExitGame from './ExitGame';
+
 
 export default function GameControl({ handlers, actions }) {
-
-    const canStartGame = actions?.includes("startGame");
-    const canStartRound = actions?.includes("startRound");
-    const canExitGame = actions?.includes("exitGame");
-
     return (
         <div className='gamecontrol'>
             <RegistrationForm handlers={handlers} actions={actions} />
-            {canStartGame &&
-                <button
-                    className='btn btn--primary'
-                    name="startGame"
-                    onClick={() => handlers.handleStartGame()}
-                    disabled={!canStartGame}>
-                    Start Game
-                </button>
-            }
-            {canStartRound &&
-                <button
-                    name="startRound"
-                    className='btn btn--primary'
-                    onClick={() => handlers.handleStartRound()}
-                    disabled={!canStartRound}>
-                    Next Round
-                </button>
-            }
-            <div>
-                {canExitGame &&
-                    < button
-                        name="exitGame"
-                        className='btn btn--primary'
-                        onClick={() => handlers.handleExitGame()}
-                        disabled={!canExitGame}>
-                        Exit Game
-                    </button>
-                }
-            </div>
+            <StartGame handlers={handlers} actions={actions} />
+            <StartRound handlers={handlers} actions={actions} />
+            <ExitGame handlers={handlers} actions={actions} />
         </div >
     )
 }

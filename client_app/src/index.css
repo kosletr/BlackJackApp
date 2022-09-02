@@ -5,7 +5,7 @@
 }
 
 html {
-  background-image: url('assets/background.webp');
+  background-image: url('assets/images/background.webp');
   background-repeat: repeat;
   height: 100%;
   width: 100%;
@@ -45,24 +45,40 @@ code {
   margin: 5px;
   padding: 0 10px;
   min-width: 85px;
-  border: 3px solid #8cee2f;
   cursor: pointer;
 }
 
 .btn--primary {
   background: linear-gradient(180deg, rgb(60, 153, 26) 10%, rgb(104, 220, 62)100%);
+  border: 3px solid #8cee2f;
   color: white;
 }
 
 .btn--primary:active {
   background: linear-gradient(180deg, rgba(104, 220, 62) 10%, rgba(60, 153, 26) 100%);
-  color: #666666;
+  border: 3px solid #8cee2f;
 }
 
-.btn--primary:disabled {
-  background: #cccccc;
-  color: #666666;
-  cursor: default;
+.btn--secondary {
+  background: linear-gradient(180deg, rgb(250, 5, 78) 10%, rgb(239, 114, 75) 100%);
+  border: 3px solid #ea0f0f;
+  color: white;
+}
+
+.btn--secondary:active {
+  background: linear-gradient(180deg, rgb(239, 114, 75) 10%, rgb(250, 5, 78) 100%);
+  border: 3px solid #ea0f0f;
+}
+
+.btn--tertiary {
+  background: linear-gradient(180deg, rgb(5, 185, 250) 10%, rgb(41, 108, 223) 100%);
+  border: 3px solid #6ae4e9;
+  color: white;
+}
+
+.btn--tertiary:active {
+  background: linear-gradient(180deg, rgb(41, 108, 223) 10%, rgb(5, 185, 250) 100%);
+  border: 3px solid #6ae4e9;
 }
 
 input {

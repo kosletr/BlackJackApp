@@ -1,15 +1,6 @@
 import React from "react"
-import bet_img from "../assets/bet.png";
-import bet_img_disabled from "../assets/bet_disabled.png";
-import deck from "../assets/deck.png";
-import deck_disabled from "../assets/deck_disabled.png";
-import stand from "../assets/stand.png";
-import stand_disabled from "../assets/stand_disabled.png";
-import split from "../assets/split.png";
-import split_disabled from "../assets/split_disabled.png";
-import doubledown from "../assets/doubledown.png";
-import doubledown_disabled from "../assets/doubledown_disabled.png";
 import { useState } from "react";
+import { sounds, images } from "../assets";
 
 export default function RoundControl({ handlers, actions, configurations }) {
     const canBet = actions?.includes("bet");
@@ -20,10 +11,35 @@ export default function RoundControl({ handlers, actions, configurations }) {
 
     const [bet, setBet] = useState('');
 
-    function handleBetButton() {
+    function onBet() {
         if (!canBet) return;
+        sounds.bet.play();
         handlers.handleBet(bet);
         setBet('');
+    }
+
+    function onHit() {
+        if (!canHit) return;
+        sounds.drawingcard.play();
+        handlers.handleHit();
+    }
+
+    function onStand() {
+        if (!canStand) return;
+        sounds.stand.play();
+        handlers.handleStand();
+    }
+
+    function onSplit() {
+        if (!canSplit) return;
+        sounds.split.play();
+        handlers.handleSplit();
+    }
+
+    function onDoubleDown() {
+        if (!canDoubleDown) return;
+        sounds.doubledown.play();
+        handlers.handleDoubleDown();
     }
 
     return (
@@ -47,9 +63,9 @@ export default function RoundControl({ handlers, actions, configurations }) {
                     <img
                         name="bet"
                         className={"roundcontrol__img" + (canBet ? "" : " roundcontrol__img--disabled")}
-                        src={canBet ? bet_img : bet_img_disabled}
+                        src={canBet ? images.bet : images.bet_disabled}
                         alt="Casino chips indicating that the player wants to bet."
-                        onClick={handleBetButton}
+                        onClick={onBet}
                     />
                 </div>
             </section>
@@ -58,33 +74,33 @@ export default function RoundControl({ handlers, actions, configurations }) {
                     <img
                         name="hit"
                         className={"roundcontrol__img" + (canHit ? "" : " roundcontrol__img--disabled")}
-                        src={canHit ? deck : deck_disabled}
+                        src={canHit ? images.deck : images.deck_disabled}
                         alt="A deck of cards."
-                        onClick={() => canHit && handlers.handleHit()}
+                        onClick={onHit}
                     />
                 </div>
                 <div className="stand">
                     <img name="stand"
                         className={"roundcontrol__img" + (canStand ? "" : " roundcontrol__img--disabled")}
-                        src={canStand ? stand : stand_disabled}
+                        src={canStand ? images.stand : images.stand_disabled}
                         alt="A closed palm facing front indicitaing that the player stands."
-                        onClick={() => canStand && handlers.handleStand()}
+                        onClick={onStand}
                     />
                 </div>
                 <div className="split">
                     <img name="split"
                         className={"roundcontrol__img" + (canSplit ? "" : " roundcontrol__img--disabled")}
-                        src={canSplit ? split : split_disabled}
+                        src={canSplit ? images.split : images.split_disabled}
                         alt="."
-                        onClick={() => canSplit && handlers.handleSplit()}
+                        onClick={onSplit}
                     />
                 </div>
                 <div className="doubledown">
                     <img name="doubledown"
                         className={"roundcontrol__img" + (canDoubleDown ? "" : " roundcontrol__img--disabled")}
-                        src={canDoubleDown ? doubledown : doubledown_disabled}
+                        src={canDoubleDown ? images.doubledown : images.doubledown_disabled}
                         alt="A closed palm facing front indicitaing that the player doubles the wager."
-                        onClick={() => canDoubleDown && handlers.handleDoubleDown()}
+                        onClick={onDoubleDown}
                     />
                 </div>
             </section>

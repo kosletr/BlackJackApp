@@ -24,7 +24,7 @@ function App() {
 
     ws.onmessage = (message) => {
       const response = JSON.parse(message.data);
-      if (response?.data === "heartbeat") { console.log("PING"); return };
+      if (response?.data === "heartbeat") return;
       if (response.status === 200) {
         setData(response);
         console.log(response);

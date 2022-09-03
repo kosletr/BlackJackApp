@@ -29,15 +29,26 @@ body {
   flex-direction: column;
 }
 
-h1 {
-  margin: 0;
-  font-size: 2rem;
-}
-
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 25px;
+  background-color: rgb(37, 61, 37);
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 25px;
+  background-color: #7cf30d;
+}
+
 
 .btn {
   border-radius: 15px;

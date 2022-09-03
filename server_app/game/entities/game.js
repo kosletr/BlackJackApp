@@ -15,24 +15,25 @@ module.exports = class Game {
     }
 
     startGame() {
-        this.#startNewRoundWithPlayers(this.#createPlayersFromClients());
+        this.#startNewRoundWithClients(this.clients);
     }
 
     startNextRound() {
-        const playersThatDidNotExitTheGame = this.previousPlayers?.filter(p => this.clients.includes(p.client));
-        this.#startNewRoundWithPlayers(playersThatDidNotExitTheGame || this.#createPlayersFromClients());
+        const clientsThatHaveNotExitedTheGame = this.clientsForNextRound?.filter(c => this.clients.includes(c)) || this.clients;
+        this.#startNewRoundWithClients(clientsThatHaveNotExitedTheGame);
     }
 
-    #startNewRoundWithPlayers(players) {
-        if (this.clients.length === 0) throw new GameError("Cannot start a game/round without any players.");
+    #startNewRoundWithClients(clients) {
+        const players = this.#createPlayersFromClients(clients);
+        if (players.length === 0) throw new GameError("Cannot start a game/round without any clients.");
         this.currentRound = new Round(players, this.id);
         this.rounds.push(this.currentRound);
         this.allowedMoves = ["exitGame"];
         this.informAllClientsOfTheGame();
     }
 
-    #createPlayersFromClients() {
-        return this.clients.map(c => new Player(c));
+    #createPlayersFromClients(clients) {
+        return clients.map(c => new Player(c));
     }
 
     executeCommand(clientId, command) {
@@ -55,17 +56,13 @@ module.exports = class Game {
     }
 
     finishCurrentRound() {
-        const playersForNextRounds = this.#keepPlayersForNextRounds();
-        this.previousPlayers = playersForNextRounds.map(p => p.clone());
+        this.clientsForNextRound = this.#keepClientsForNextRounds();
         this.allowedMoves = ["startNextRound", "exitGame"];
     }
 
-    #keepPlayersForNextRounds() {
-        const uniquePlayerIDs = new Set();
-        for (const player of this.currentRound.players)
-            if (!uniquePlayerIDs.has(player.client.id)) uniquePlayerIDs.add(player.client.id);
-            else player.id = null;
-        return this.currentRound.players.filter(p => p.id);
+    #keepClientsForNextRounds() {
+        const uniqueClientIDs = new Set(this.currentRound.players.map(p => p.client.id));
+        return this.clients.filter(c => uniqueClientIDs.has(c.id));
     }
 
     hasStarted() {

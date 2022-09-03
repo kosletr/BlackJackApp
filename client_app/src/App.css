@@ -31,7 +31,7 @@
 }
 
 .dealerboard {
-    min-height: 325px;
+    min-height: 275px;
     min-width: 400px;
     width: 100%;
     border: 2px solid lightgreen;
@@ -103,7 +103,7 @@
 }
 
 .playersboard {
-    min-height: 325px;
+    min-height: 275px;
     min-width: 400px;
     border: 2px solid lightgreen;
     border-radius: 15px;
@@ -150,7 +150,7 @@
 }
 
 .card {
-    width: 75px;
+    width: 70px;
 }
 
 .deck {

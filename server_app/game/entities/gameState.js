@@ -36,8 +36,7 @@ function getPlayersState(players) {
         outcome: p.outcome,
         score: p.score,
         clientId: p.client.id,
-        totalAmount: p.client.totalAmount,
-        allowedMoves: p.allowedMoves
+        totalAmount: p.client.totalAmount
     }))
 }
 

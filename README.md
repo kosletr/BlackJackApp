@@ -87,11 +87,11 @@ Tests are also implemented to validate the behavior of the game.
  - for the unit tests only run:
     
     ```
-    npm test:unit
+    npm run test:unit
     ```
 -  and for the integration tests (not implemented yet) run:
     ```
-    npm test:int
+    npm run test:int
     ```
 
 ### Some notes about the architecture

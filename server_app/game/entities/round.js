@@ -44,7 +44,7 @@ module.exports = class Round {
         this.#dealCards();
         this.#resetTurnAfterDealingTheCards();
         if (this.#canDoubleDown(amount)) this._selectedParticipant.allowedMoves.push(ACTIONS.DOUBLE_DOWN);
-        if (this.#canSplit()) this._selectedParticipant.allowedMoves.push(ACTIONS.SPLIT);
+        if (this.#canSplit(amount)) this._selectedParticipant.allowedMoves.push(ACTIONS.SPLIT);
         this.dealtCards = true;
     }
 
@@ -83,7 +83,7 @@ module.exports = class Round {
         if (this._selectedParticipant.hasBlackJack()) return this.#continueToNextParticipant();
         this._selectedParticipant.allowedMoves = [ACTIONS.HIT, ACTIONS.STAND];
         if (this.#canDoubleDown(this._selectedParticipant.currentBet)) this._selectedParticipant.allowedMoves.push(ACTIONS.DOUBLE_DOWN);
-        if (this.#canSplit()) this._selectedParticipant.allowedMoves.push(ACTIONS.SPLIT);
+        if (this.#canSplit(this._selectedParticipant.currentBet)) this._selectedParticipant.allowedMoves.push(ACTIONS.SPLIT);
     }
 
     isCompleted() {
@@ -106,9 +106,10 @@ module.exports = class Round {
             amount <= this._selectedParticipant?.client.totalAmount;
     }
 
-    #canSplit() {
+    #canSplit(amount) {
         if (!this._selectedParticipant) return false;
         if (this._selectedParticipant.cards.length !== 2) return false;
+        if (this._selectedParticipant.client.totalAmount < amount) return false;
         const firstCard = this._selectedParticipant.cards[0];
         const isAnAceCard = firstCard.points.length > 1;
         if (isAnAceCard) return false;
@@ -137,7 +138,7 @@ module.exports = class Round {
     }
 
     split() {
-        if (!this.#canSplit()) throw new GameError("Split is allowed when the player has two cards with the same value.");
+        if (!this.#canSplit(this._selectedParticipant.currentBet)) throw new GameError("Split is allowed when the player has two cards with the same value.");
         const [firstHand, secondHand] = this._selectedParticipant.split();
         this._players.splice(this.playerIndex, 1, firstHand, secondHand);
         this.#updateSelectedPlayer();

@@ -297,6 +297,26 @@ describe('Round', () => {
                 expect(player1.allowedMoves).toEqual([]);
             })
 
+            it("should not allow the second player to split when the second player does not have enough money.", () => {
+                round = new Round([player1, player2]);
+                round.gameCards = drawCustomCards([
+                    { rank: '10', suit: 'clubs' }, { rank: 'Q', suit: 'clubs' }, { rank: 'Q', suit: 'clubs' },
+                    { rank: '2', suit: 'clubs' }, { rank: 'Q', suit: 'clubs' }, { rank: 'Q', suit: 'clubs' },
+                ]);
+
+                round.bet({ playerId: player1.id, amount: 50 });
+                round.bet({ playerId: player2.id, amount: 600 });
+                round.stand();
+
+                expect(round.selectedParticipant.id).toBe(player2.id);
+                expect(round.isCompleted()).toBeFalsy();
+                expect(player2.allowedMoves).toContain(ACTIONS.HIT);
+                expect(player2.allowedMoves).toContain(ACTIONS.STAND);
+                expect(player2.allowedMoves).not.toContain(ACTIONS.DOUBLE_DOWN);
+                expect(player2.allowedMoves).not.toContain(ACTIONS.SPLIT);
+                expect(player1.allowedMoves).toEqual([]);
+            })
+
             it("should allow the second player to play if the first player has hit and received 21.", () => {
                 round = new Round([player1, player2]);
                 round.gameCards = drawCustomCards([

@@ -110,6 +110,4 @@ In a `Round` we have two types of `Participant`s, the `Player`s and the `Dealer`
  A `Player` takes a `Client` object via Dependency Injection as each `Player` is assigned to one and only `Client`. However, a `Client` might belong to two `Player`s in case of split. In this case, two `Player` objects are used to manipulate the same `Client` object and transfer the amount of money that the player either won or lost.
  ![](notes/client.png)
 
-* Note: In the class diagrams above the Composition symbol was used. In some cases (if not all) the Aggragation symbol would be more appropriate. However, our focus here is on the interactions between classes/objects to get a high level overview of the system.
-
  ### By Konstantinos Letros (kosletr)

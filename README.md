@@ -56,12 +56,11 @@ Notes for this version of the game:
 ## Setup Instructions (development)
 
 1. Clone the repository.
-2. Install node dependencies.
+2. Install node dependencies (skip this step if using the devcontainer).
 
     ```
-    cd server_app && npm i
-    cd ..
-    cd client_app && npm i 
+    cd server_app && npm i && cd -
+    cd client_app && npm i && cd -
     ```
 
 3. Run the server and client applications by opening two terminal windows. For the server:
